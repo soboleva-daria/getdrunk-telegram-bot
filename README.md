@@ -9,7 +9,7 @@ getdrunk bot supports the next scenarios of communication [TODO]:
 -  ask and receive any useful information about the cocktail (author, date it was invented, degree)
 -  ask and receive the recipe of the day
 -  ask to start the session
--  ask to end the session`
+-  ask to end the session
 
 **Examples of the dialogs supported**
 [TODO]
