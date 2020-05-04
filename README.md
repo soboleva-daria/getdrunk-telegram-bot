@@ -12,7 +12,7 @@ getdrunk bot supports the next scenarios of communication [TODO]:
 -  ask to end the session
 
 **Examples of the dialogs supported**
-[TODO]
+<img src="images/examples.png" width="1000" height="350" />
 
 **The Authors**
 - Daria Soboleva, 517 group (@soboleva-daria)
