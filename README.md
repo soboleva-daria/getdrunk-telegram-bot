@@ -1,9 +1,29 @@
 **getdrunk is a telegram bot that recommends you an alcohol drink in return to the list of ingredients you have.**
 
-* getdrunk bot has a server and a client part. Server part is responsible for recieving the list of ingredients in natural language [TODO: which language] and answering with the best cocktail recipe matched with the ingredients provided. [Todo: image of the cocktail? Any other useful information about the drink?]
+**Description** 
 
-* getdrunk bot a smart ML processing algorithm [TODO: BERT based, description of the model] which is trained on the collection of ingredients and the cocktail names pairs that could be prepared with the ingredients. 
+getdrunk bot supports the next scenarios of communication [TODO]:
+-  ask and receive the recipe of the cocktail in return to ingredients provided
+-  ask and receive current intoxication level (in stages: Sobriety, Euphoria, Excitement, Confusion, ..., Coma, Death)
+-  ask and receive the image of the cocktail
+-  ask and receive any useful information about the cocktail (author, date it was invented, degree)
+-  ask and receive the recipe of the day
+-  ask to start the session
+-  ask to end the session`
 
-* getdrunk bot is run on www.heroku.com. [Todo: access to the app outside?] [Todo: example of how it works on telegram app?]
+**Examples of the dialogs supported**
+[TODO]
+
+**The Authors**
+- Daria Soboleva, 517 group (@soboleva-daria)
+- Nikolay Skachkov, 517 group (@Seriont)
+- Alexey Pismenny, 517 group (@alexey-pismenny)
+- Mariia Yavorskaia, 517 group (@IavorskaiaMariia)
+    
+    
+**How to install and run**
+[TODO]
 
 <img src="images/readme-img.png" width="400" height="350" />
+
+
