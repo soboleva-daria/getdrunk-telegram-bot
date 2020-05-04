@@ -1,7 +1,7 @@
 from telethon import TelegramClient
 import sys
 
-from .bot.bot import GetDrunkTelegramBot
+from .bot.server import GetDrunkTelegramBot
 
 
 def main(api_id, api_hash, proxy, connection, model_name, train):

@@ -2,6 +2,9 @@ from ..model.predict import TFIdfCocktailModel, BertCocktailModel
 
 
 class GetDrunkTelegramBot:
+    # TODO: add exploratory user request
+    # TODO: add specified user request
+    # TODO: add recipe of the day request
     def __init__(self, client, model_name='TFIdfCocktailModel', train=None, model_config_file=None, model_vocab_file=None):
         self.client = client
         self.model_name = model_name
