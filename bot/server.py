@@ -1,3 +1,8 @@
+import argparse
+import requests
+
+from flask import request, Flask
+
 from ..model.predict import TFIdfCocktailModel, BertCocktailModel
 
 
@@ -67,3 +72,58 @@ class GetDrunkTelegramBot:
 
     def send_intoxication_degree(self):
         pass
+
+
+def parse_server_args(string_args=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default='8888')
+    parser.add_argument('--token', type=str, required=True)
+
+    return parser.parse_args(args=string_args)
+
+
+# TODO: merge with GetDrunkTelegramBot
+class GetDrunkHandler:
+    """Handles user request"""
+    def __init__(self, token):
+        self._token = token
+
+    def __call__(self, chat_id, user_request_data):
+        # TODO: add server logic
+        self._send_message(chat_id, 'request processed!')
+
+    def _send_message(self, chat_id, text):
+        method = "sendMessage"
+        url = f"https://api.telegram.org/bot{self._token}/{method}"
+        data = {"chat_id": chat_id, "text": text}
+        requests.post(url, data=data)
+
+
+def create_server(args):
+    app = Flask(__name__)
+    handler = GetDrunkHandler(token=args.token)
+
+    @app.route('/', methods=['GET', 'POST'])
+    def post():
+        """
+        Handles every user message.
+        """
+
+        if request.method == "POST":
+            # data format may differ
+            data = request.get_json(force=True)
+            chat_id = data["message"]["chat"]["id"]
+
+            handler(chat_id, 'request processed')
+
+        return {"ok": True}
+
+    return app
+
+
+if __name__ == '__main__':
+    args = parse_server_args()
+    app = create_server()
+
+    # use_reloader is false due to problems with CUDA and multiprocessing
+    app.run(port=args.port, debug=False, use_reloader=False)
