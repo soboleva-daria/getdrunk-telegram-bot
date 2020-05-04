@@ -7,6 +7,8 @@ class RawDataset:
     Dataset manages training sets.
     It serves correct formats and can perform additional parsings.
     TODO: add more attributes, split useful info into final list of attributes needed.
+    TODO: make an interface via setter, getter, modify to allow adding new recipes.
+    TODO: maybe split in 2 classes: RawDataset, Dataset.
     """
     def __init__(self):
         self.recipes = None

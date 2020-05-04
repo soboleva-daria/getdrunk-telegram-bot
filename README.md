@@ -9,10 +9,17 @@ getdrunk bot supports the next scenarios of communication [TODO]:
 -  ask and receive any useful information about the cocktail (author, date it was invented, degree)
 -  ask and receive the recipe of the day
 -  ask to start the session
+<<<<<<< HEAD
 -  ask to end the session`
 
 **Examples of the dialogs supported**
 <img src="images/examples.png" width="400" height="350" />
+=======
+-  ask to end the session
+
+**Examples of the dialogs supported**
+[TODO]
+>>>>>>> 1c1932332cddaf569c2b0c1234c8364da7a7d798
 
 **The Authors**
 - Daria Soboleva, 517 group (@soboleva-daria)
