@@ -4,6 +4,7 @@
 
 getdrunk bot supports the next scenarios of communication [TODO]:
 -  ask and receive the recipe of the cocktail in return to ingredients provided
+-  ask and receive all the recipes of the cocktails that are similar to the given one
 -  ask and receive current intoxication level (in stages: Sobriety, Euphoria, Excitement, Confusion, ..., Coma, Death)
 -  ask and receive the image of the cocktail
 -  ask and receive any useful information about the cocktail (author, date it was invented, degree)
