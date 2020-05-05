@@ -3,8 +3,6 @@ import requests
 
 from flask import request, Flask
 
-from ..model.predict import TFIdfCocktailModel, BertCocktailModel
-
 
 class GetDrunkTelegramBot:
     # TODO: add exploratory user request
@@ -22,9 +20,9 @@ class GetDrunkTelegramBot:
 
     def init_model(self):
         if self.model_name == 'TFIdfCocktailModel':
-            self.model = TFIdfCocktailModel(self.train).train_on_recipes()
+            self.model = None # TFIdfCocktailModel(self.train).train_on_recipes()
         elif self.model_name == 'BertCocktailModel':
-            self.model = BertCocktailModel(self.model_config_file, self.model_vocab_file)
+            self.model = None # BertCocktailModel(self.model_config_file, self.model_vocab_file)
         else:
             raise ValueError(
                 "Error in model_name. Available models: {}, Got: {}".format(
@@ -74,34 +72,42 @@ class GetDrunkTelegramBot:
         pass
 
 
-def parse_server_args(string_args=None):
+def parse_server_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default='8888')
     parser.add_argument('--token', type=str, required=True)
+    parser.add_argument('--web-hook-url', type=str, required=True)
 
-    return parser.parse_args(args=string_args)
+    return parser.parse_args()
 
 
 # TODO: merge with GetDrunkTelegramBot
 class GetDrunkHandler:
     """Handles user request"""
-    def __init__(self, token):
-        self._token = token
+    def __init__(self, token, hook_url):
+        self.bot_url = f"https://api.telegram.org/bot{token}"
+        self._set_web_hook(hook_url)
+
+    def _set_web_hook(self, hook_url):
+        method = "setWebhook"
+        url = f"{self.bot_url}/{method}"
+        data = {"url": hook_url}
+        requests.post(url, data=data)
 
     def __call__(self, chat_id, user_request_data):
         # TODO: add server logic
-        self._send_message(chat_id, 'request processed!')
+        self._send_message(chat_id, user_request_data)
 
     def _send_message(self, chat_id, text):
         method = "sendMessage"
-        url = f"https://api.telegram.org/bot{self._token}/{method}"
+        url = f"{self.bot_url}/{method}"
         data = {"chat_id": chat_id, "text": text}
         requests.post(url, data=data)
 
 
 def create_server(args):
     app = Flask(__name__)
-    handler = GetDrunkHandler(token=args.token)
+    handler = GetDrunkHandler(token=args.token, hook_url=args.web_hook_url)
 
     @app.route('/', methods=['GET', 'POST'])
     def post():
@@ -113,8 +119,13 @@ def create_server(args):
             # data format may differ
             data = request.get_json(force=True)
             chat_id = data["message"]["chat"]["id"]
+            text = data["message"]["text"]
 
-            handler(chat_id, 'request processed')
+            print("Got a message: <%s>." % text)
+
+            handler(chat_id, text)
+        else:
+            return "Hello, world!"
 
         return {"ok": True}
 
@@ -123,7 +134,7 @@ def create_server(args):
 
 if __name__ == '__main__':
     args = parse_server_args()
-    app = create_server()
+    app = create_server(args)
 
     # use_reloader is false due to problems with CUDA and multiprocessing
     app.run(port=args.port, debug=False, use_reloader=False)
