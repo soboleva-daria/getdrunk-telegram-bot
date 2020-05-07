@@ -3,24 +3,27 @@ from copy import copy, deepcopy
 
 class Cocktail:
 
-    def __init__(self, ingredients, recipe, image, useful_info):
-        self.ingredients = ingredients
+    def __init__(self, name, ingredients, recipe, image, useful_info, abv, volume):
+        self.name = name
+        self._ingredients = ingredients
         self.recipe = recipe
-        self.image = image
+        self._image = image
         self.useful_info = useful_info
+        self.abv = abv
+        self.volume = volume
 
     @property
     def ingredients(self):
-        return copy(self.ingredients)
+        return copy(self._ingredients)
 
     @ingredients.setter
     def ingredients(self, ingredients):
-        self.ingredients = copy(ingredients)
+        self._ingredients = copy(ingredients)
 
     @property
     def image(self):
-        return deepcopy(self.image)
+        return deepcopy(self._image)
 
     @image.setter
     def image(self, image):
-        self.image = deepcopy(image)
+        self._image = deepcopy(image)
