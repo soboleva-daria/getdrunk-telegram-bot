@@ -23,9 +23,9 @@ class TFIdfCocktailModel(BaseModel):
         self.trained = False
         self.vectorizer = TfidfVectorizer()
 
-    def normalize(self, data):
+    def normalize(self, matrix):
         # Use any simple normalization technique
-        return sk.preprocessing.normalize(data, norm='l2', axis=1)
+        return sk.preprocessing.normalize(matrix, norm='l2', axis=1)
 
     def vectorize(self, data: List[str], fit=False):
         # Use sklearn.feature_extraction.text.TfidfVectorizer
@@ -48,11 +48,10 @@ class TFIdfCocktailModel(BaseModel):
         params['useful_info'] = useful_info[best_cocktail_id]
         return Cocktail(*params)
 
-    def predict(self, query: List[str]):
-        # Estimated query looks like this: ['vodka', 'beer']
+    def predict(self, query: str):
         assert self.trained,\
             "Model cannot predict before it is trained, please train the model first by calling train_on_recipes."
-        query_vec = self.normalize(self.vectorize([' '.join(query)]))
+        query_vec = self.normalize(self.vectorize([query]))
         return self.find_matched_cocktail(query_vec)
 
 
