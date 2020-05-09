@@ -59,11 +59,18 @@ class GetDrunkTelegramBot:
         data = {"url": hook_url}
         requests.post(url, data=data)
 
-    def _send_message(self, text):
-        method = "sendMessage"
-        url = f"{self._bot_url}/{method}"
-        data = {"chat_id": self._chat_id, "text": text}
-        requests.post(url, data=data)
+    def _send_message(self, text, photo=False, photo_path=None):
+        if photo:
+            method = "sendPhoto"
+            url = f"{self._bot_url}/{method}"
+            data = {"chat_id": self._chat_id, 'caption': text}
+            with open(photo_path, "rb") as image_file:
+                requests.post(url, data=data, files={"photo": image_file})
+        else:
+            method = "sendMessage"
+            url = f"{self._bot_url}/{method}"
+            data = {"chat_id": self._chat_id, "text": text}
+            requests.post(url, data=data)
 
     def init_model(self):
         if self.model_name == 'BaseModel':
@@ -162,13 +169,13 @@ Enjoy! 💫
         if cocktail is None:
             msg = "Oh 🤗 looks like you didn't select the cocktail. " \
                   "Let's try again, just say \\recipe!"
+            self._send_message(msg)
         else:
             # TODO: fix here to send real image
             msg = \
                 """
-                {} {}! 🔬
-                """.format(cocktail.name, cocktail.image)
-        self._send_message(msg)
+                {}""".format(cocktail.name)
+            self._send_message(msg, photo=True, photo_path='../utils/{}.png'.format(cocktail.orig_name))
 
     def _send_intoxication_degree(self):
         degree = self._get_intoxication_degree()
@@ -218,7 +225,6 @@ Here is the list of what you took:
 
         if self.index is None:
             self.index = random.randint(0, len(self.recipes_of_the_day))
-
         self.cocktail = self.recipes_of_the_day[self.index]
         msg = \
             """
@@ -284,7 +290,10 @@ Thank you! 🙏
     @staticmethod
     def parse_ingredients(msg):
         # TODO: might be done in different format
-        return msg[msg.index('\\recipe') + len('\\recipe'):].strip().split(punctuation)
+        try:
+            return msg[msg.index('\\recipe') + len('\\recipe'):].strip().split(punctuation)
+        except ValueError:
+            return []
 
     # TODO: put this method into drinks/preprocessing later?
     @staticmethod
@@ -300,20 +309,20 @@ Thank you! 🙏
             # TODO restructure?
             name, ingredients, recipe, image, abv, volume, author, location, source = row[1]
 
+            orig_name = name.replace('_', '').strip()
             name_with_emoji = emojis[name.replace('_', '').strip()]
             ingredients = map(lambda x: x.strip(), ingredients.split('\n'))
             recipe = recipe.strip()
             author = str(author).strip()
-            location = str(author).strip()
-            
+            location = str(location).strip()
+
             useful_info = "was officially invented by the bartender named {} in {}".format(author, location) if author != 'nan' else\
                 "was officially found in the source: {}".format(source)
 
             abv = float(abv)
             volume = float(volume)
-            recipes.append(Cocktail(name_with_emoji, ingredients, recipe, image, useful_info, abv, volume))
+            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients, recipe, image, useful_info, abv, volume))
 
-        print('RECIPES', recipes[0].name, recipes[-1].name)
         return recipes
 
 
@@ -341,10 +350,12 @@ def create_server(args):
         if request.method == "POST":
             # data format may differ
             data = request.get_json(force=True)
-            chat_id = data["message"]["chat"]["id"]
-            text = data["message"]["text"]
-
-            get_drunk_bot.process_message(chat_id, text)
+            try:
+                chat_id = data["message"]["chat"]["id"]
+                text = data["message"]["text"]
+                get_drunk_bot.process_message(chat_id, text)
+            except ValueError:
+                pass
         else:
             return "Hello, world!"
 
