@@ -15,6 +15,7 @@ from drinks.cocktail import Cocktail
 import random
 import pickle
 from datetime import datetime
+import numpy as np
 
 
 class GetDrunkTelegramBot:
@@ -289,7 +290,7 @@ Thank you! 🙏
     @staticmethod
     def load_recipes_of_the_day():
         data = pd.read_csv('../utils/05-CocktailRecipes.csv')[
-            ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'INFO', 'ABV', 'VOLUME']
+            ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'ABV', 'VOLUME', 'AUTHOR', 'LOCATION', 'OriginalRecipeSource']
         ]
         with open('../utils/emoji.pkl', 'rb') as fin:
             emojis = pickle.load(fin)
@@ -297,11 +298,17 @@ Thank you! 🙏
         recipes = []
         for row in data.iterrows():
             # TODO restructure?
-            name, ingredients, recipe, image, useful_info, abv, volume = row[1]
+            name, ingredients, recipe, image, abv, volume, author, location, source = row[1]
+
             name_with_emoji = emojis[name.replace('_', '').strip()]
             ingredients = map(lambda x: x.strip(), ingredients.split('\n'))
             recipe = recipe.strip()
-            useful_info = useful_info.strip()
+            author = str(author).strip()
+            location = str(author).strip()
+            
+            useful_info = "was officially invented by the bartender named {} in {}".format(author, location) if author != 'nan' else\
+                "was officially found in the source: {}".format(source)
+
             abv = float(abv)
             volume = float(volume)
             recipes.append(Cocktail(name_with_emoji, ingredients, recipe, image, useful_info, abv, volume))
