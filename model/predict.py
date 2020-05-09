@@ -5,6 +5,10 @@ sys.path.append('../')
 from drinks.cocktail import Cocktail
 from drinks.preprocessing import RawDataset
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+import sklearn as sk
+from typing import List
+
 
 class BaseModel:
     # BaseModel answers are hardcoded for demo only.
@@ -40,28 +44,37 @@ class TFIdfCocktailModel(BaseModel):
         self.train = train
         self.train_vectors = None
         self.trained = False
+        self.vectorizer = TfidfVectorizer()
 
-    def normalize(self):
+    def normalize(self, matrix):
         # Use any simple normalization technique
-        pass
+        return sk.preprocessing.normalize(matrix, norm='l2', axis=1)
 
-    def vectorize(self):
+    def vectorize(self, data: List[str], fit=False):
         # Use sklearn.feature_extraction.text.TfidfVectorizer
-        pass
+        if fit:
+            self.vectorizer.fit(data)
+        return self.vectorizer.transform(data)
 
     def train_on_recipes(self):
-        self.train_vectors = self.vectorize(self.normalize(self.train))
+        self.train_vectors = self.normalize(self.vectorize(self.train.get_train_set()[0], True))
         self.trained = True
 
     def find_matched_cocktail(self, query_vec):
         # Use cosine similarity between train vectors and query_vec -> argmax
         params = {'ingredients': None, 'recipe': None, 'image': None, 'useful_info': None}
+
+        best_cocktail_id = self.train_vectors.dot(query_vec.T).argmax()
+        recipes, images, useful_info = self.train.get_train_set()
+        params['recipe'] = recipes[best_cocktail_id]
+        params['image'] = images[best_cocktail_id]
+        params['useful_info'] = useful_info[best_cocktail_id]
         return Cocktail(*params)
 
-    def predict(self, query):
+    def predict(self, query: str):
         assert self.trained,\
             "Model cannot predict before it is trained, please train the model first by calling train_on_recipes."
-        query_vec = self.vectorize(self.normalize(query))
+        query_vec = self.normalize(self.vectorize([query]))
         return self.find_matched_cocktail(query_vec)
 
 
