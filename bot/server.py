@@ -9,11 +9,16 @@ import sys
 sys.path.append('../')
 
 from model.predict import BaseModel, TFIdfCocktailModel, BertCocktailModel
+import pandas as pd
+
+from drinks.cocktail import Cocktail
+import random
+import pickle
+from datetime import datetime
 
 
 class GetDrunkTelegramBot:
     # TODO: add exploratory user request
-    # TODO: add specified user request [choose_best_cocktail_with_ingredients, solved: @Seriont?]
     # TODO: Better formatting for special names? cocktail name etc.
     # TODO: more information for user about what cocktail is currently processing.
     # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?
@@ -30,21 +35,33 @@ class GetDrunkTelegramBot:
         self._bot_url = f"https://api.telegram.org/bot{token}"
         self._set_web_hook(hook_url)
         self._chat_id = None
+
         self.model_name = model_name
         self.train = train
         self.model_config_file = model_config_file
         self.model_vocab_file = model_vocab_file
         self.model = None
+        self.init_model()
+
         self.cocktail = None
-        self.debug = debug
         self.total_alcohol_absorbed = 0
         self.cocktails_history = []
+        self.recipes_of_the_day = self.load_recipes_of_the_day()
+        self.index = None # index of the cocktail in recipe of the day list, refactor here
+
+        self.debug = debug
         self.init_model()
 
     def _set_web_hook(self, hook_url):
         method = "setWebhook"
         url = f"{self._bot_url}/{method}"
         data = {"url": hook_url}
+        requests.post(url, data=data)
+
+    def _send_message(self, text):
+        method = "sendMessage"
+        url = f"{self._bot_url}/{method}"
+        data = {"chat_id": self._chat_id, "text": text}
         requests.post(url, data=data)
 
     def init_model(self):
@@ -60,12 +77,6 @@ class GetDrunkTelegramBot:
                     ['TFIdfCocktailModel', 'BertCocktailModel', 'BaseModel'],
                     self.model_name))
 
-    def _send_message(self, text):
-        method = "sendMessage"
-        url = f"{self._bot_url}/{method}"
-        data = {"chat_id": self._chat_id, "text": text}
-        requests.post(url, data=data)
-
     def process_message(self, chat_id, msg):
         self._chat_id = chat_id
 
@@ -77,6 +88,9 @@ class GetDrunkTelegramBot:
 
         elif msg == '\end':
             self._end_session_and_say_bye()
+
+        elif msg == '\\recipe of the day':
+            self._send_day_cocktail()
 
         elif '\\recipe' in msg:
             ingredients = self.parse_ingredients(msg)
@@ -91,8 +105,8 @@ class GetDrunkTelegramBot:
         elif msg == '\info':
             self._send_cocktail_useful_info(self.cocktail)
 
-        elif msg == '\\recipe of the day':
-            self._send_day_recipe()
+        elif msg == '\menu':
+            self._send_cocktails_menu()
 
         elif '\explore' in msg:
             ingredients = self.parse_ingredients(msg)
@@ -144,7 +158,16 @@ Enjoy! 💫
         self._send_message(msg)
 
     def _send_cocktail_image(self, cocktail):
-        pass
+        if cocktail is None:
+            msg = "Oh 🤗 looks like you didn't select the cocktail. " \
+                  "Let's try again, just say \\recipe!"
+        else:
+            # TODO: fix here to send real image
+            msg = \
+                """
+                {} {}! 🔬
+                """.format(cocktail.name, cocktail.image)
+        self._send_message(msg)
 
     def _send_intoxication_degree(self):
         degree = self._get_intoxication_degree()
@@ -158,8 +181,9 @@ Here is the list of what you took:
         self._send_message(msg)
 
     def _get_intoxication_degree(self):
-        # 170 is avg female weight in the us in pounds, TODO: fix here
+        # 170 is avg female weight in the US in pounds, TODO: fix here
         bac = 100 * self.total_alcohol_absorbed / 77110.7 / 0.55
+        print('BAC', bac)
         if self.debug:
             print('BAC', bac, self.total_alcohol_absorbed)
         if 0.0 <= bac <= 0.03:
@@ -167,9 +191,9 @@ Here is the list of what you took:
         elif 0.03 < bac <= 0.09:
             return 'Euphoria 🦄 stage (2 out of 7)'
         elif 0.09 < bac <= 0.18:
-            return 'Excitment 🥳 stage (3 out of 7)'
+            return 'Excitement 🥳 stage (3 out of 7)'
         elif 0.18 < bac <= 0.30:
-            return 'Confision 🙈 stage (4 out of 7)'
+            return 'Confusion 🙈 stage (4 out of 7)'
         elif 0.30 < bac <= 0.35:
             return "Stupor 🐨 stage (5 out of 7)"
         elif 0.35 < bac <= 0.45:
@@ -188,11 +212,39 @@ Here is the list of what you took:
     """.format(cocktail.name, cocktail.useful_info)
         self._send_message(msg)
 
-    def _send_day_recipe(self):
-        # TODO: change the logic with list of cocktails
-        # Add name "RECIPE OF THE DAY in the beginning?"
-        self._send_best_cocktail_with_ingredients(ingredients='')
+    def _send_day_cocktail(self):
+        weekday_name = datetime.today().strftime("%A")
+
+        if self.index is None:
+            self.index = random.randint(0, len(self.recipes_of_the_day))
+
+        self.cocktail = self.recipes_of_the_day[self.index]
+        msg = \
+            """
+Our {} menu 👩‍🍳🥳:
+
+{}
+
+Ingredients: {}
+
+Method: {}  
+
+
+Enjoy! 💫
+        """.format(weekday_name, self.cocktail.name, ', '.join(self.cocktail.ingredients).strip(), self.cocktail.recipe)
+
+        self.total_alcohol_absorbed += self.cocktail.abv * self.cocktail.volume
         self.cocktails_history.append(self.cocktail)
+        self._send_message(msg)
+
+    def _send_cocktails_menu(self):
+        msg = \
+"""
+Menu 🍽️ 😋: 
+
+{} 
+""".format('\n'.join([cocktail.name for cocktail in self.recipes_of_the_day]))
+        self._send_message(msg)
 
     def _send_help_message(self):
         msg = \
@@ -200,7 +252,7 @@ Here is the list of what you took:
 I am sorry :( I did not get what you mean.
 
 Please try again with these commands: 
-`\start`, `\end`, `\\recipe`, `\photo`, `\intoxication level`, `\\recipe of the day`, `\explore`, `\info`
+`\start`, `\end`, `\\recipe`, `\photo`, `\intoxication level`, `\\recipe of the day`, `\explore`, `\info`, `\menu`
 
 Thank you! 🙏
 """
@@ -232,6 +284,30 @@ Thank you! 🙏
     def parse_ingredients(msg):
         # TODO: might be done in different format
         return msg[msg.index('\\recipe') + len('\\recipe'):].strip().split(punctuation)
+
+    # TODO: put this method into drinks/preprocessing later?
+    @staticmethod
+    def load_recipes_of_the_day():
+        data = pd.read_csv('../utils/05-CocktailRecipes.csv')[
+            ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'INFO', 'ABV', 'VOLUME']
+        ]
+        with open('../utils/emoji.pkl', 'rb') as fin:
+            emojis = pickle.load(fin)
+
+        recipes = []
+        for row in data.iterrows():
+            # TODO restructure?
+            name, ingredients, recipe, image, useful_info, abv, volume = row[1]
+            name_with_emoji = emojis[name.replace('_', '').strip()]
+            ingredients = map(lambda x: x.strip(), ingredients.split('\n'))
+            recipe = recipe.strip()
+            useful_info = useful_info.strip()
+            abv = float(abv)
+            volume = float(volume)
+            recipes.append(Cocktail(name_with_emoji, ingredients, recipe, image, useful_info, abv, volume))
+
+        print('RECIPES', recipes[0].name, recipes[-1].name)
+        return recipes
 
 
 def parse_server_args():
