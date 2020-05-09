@@ -37,14 +37,14 @@ class RawDataset:
 
     @useful_info.setter
     def useful_info(self, useful_info):
-        self.recipes = deepcopy(useful_info)
+        self.useful_info = deepcopy(useful_info)
 
     def get_train_set(self):
         self.recipes = CocktailRecipesDownloader().get_recipes()
         self.images = CocktailImagesDownloader().get_images()
         self.useful_info = CocktailUsefulInfoDownloader().get_useful_info()
 
-        #TODO: should be converted to pandas format or any other useful format for training
+        # TODO: should be converted to pandas format or any other useful format for training
         return [self.recipes, self.images, self.useful_info]
 
     def dump_train_set(self):
