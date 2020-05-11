@@ -82,6 +82,15 @@ class ServerDataBase:
         self._initialize_record_if_needed(chat_id)
         return self.db[chat_id]['total_alco']
 
+    def end_current_session(self, chat_id):
+        if chat_id in self.db:
+            self.db[chat_id] = dict(
+                total_alco=0,
+                cocktails_history=[],
+                cocktail=None,
+            )
+            self._dump()
+
     def _dump(self):
         with open(self.json_path, 'wb') as f:
             pickle.dump(self.db, f)
@@ -172,7 +181,7 @@ class GetDrunkBotHandler(TelegramInterface):
             self._send_help_message(chat_id)
 
     def _start_session_and_say_hello(self, chat_id):
-        self.total_alcohol_absorbed = 0
+        self.db.end_current_session(chat_id)
         msg = self.normalize_text("""
             Hey there, wanna get drunk? 💫
             
@@ -186,13 +195,16 @@ class GetDrunkBotHandler(TelegramInterface):
             
             — explore cocktails for you  💻
         """)
+
         self._send_message(chat_id, msg)
 
     def _end_session_and_say_bye(self, chat_id):
         msg = self.normalize_text("""
+            Your cocktail history is empty now.
             You’re welcome anytime! ❤️
             Bye 🥂
         """)
+        self.db.end_current_session(chat_id)
         self._send_message(chat_id, msg)
 
     def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
