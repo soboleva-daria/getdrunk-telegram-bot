@@ -1,15 +1,15 @@
 import requests
 import random
 import pickle
+import json
 import os
 import pathlib
-import dill
 import pandas as pd
 
 from flask import request, Flask
 from string import punctuation
 from datetime import datetime
-from copy import copy, deepcopy
+from copy import deepcopy
 
 from get_drunk_telegram_bot.model.predict import (
     BaseModel, TFIdfCocktailModel, BertCocktailModel)
@@ -50,12 +50,44 @@ class TelegramInterface:
         requests.post(url, data=data)
 
 
+def decode_json(dct):
+    if "__cocktail__" in dct:
+        dct.pop("__cocktail__", None)
+        return Cocktail(**dct)
+    elif isinstance(dct, dict):
+        result = {}
+        for key, value in dct.items():
+            if key.isdigit():
+                result[int(key)] = value
+            else:
+                result[key] = value
+        return result
+
+    return dct
+
+
+def encode_json(obj):
+    if isinstance(obj, Cocktail):
+        dct = deepcopy(obj.__dict__)
+
+        dct['__cocktail__'] = True
+        for key, value in obj.__dict__.items():
+            if key.startswith('_'):
+                dct.pop(key, None)
+                dct[key.replace('_', '', 1)] = deepcopy(value)
+        return dct
+    elif isinstance(obj, map):
+        return list(obj)
+    else:
+        return json.JSONEncoder().default(obj)
+
+
 class ServerDataBase:
     def __init__(self, save_path):
         self.json_path = save_path
         if os.path.exists(save_path):
-            with open(save_path, 'rb') as f:
-                self.db = pickle.load(f)
+            with open(save_path, 'r', encoding='utf-8') as f:
+                self.db = json.load(f, object_hook=decode_json)
         else:
             self.db = {}
 
@@ -99,8 +131,8 @@ class ServerDataBase:
             self._dump()
 
     def _dump(self):
-        with open(self.json_path, 'wb') as f:
-            pickle.dump(self.db, f)
+        with open(self.json_path, 'w', encoding='utf-8') as f:
+            json.dump(self.db, f, default=encode_json, indent=4)
 
 
 class GetDrunkBotHandler(TelegramInterface):
@@ -128,10 +160,9 @@ class GetDrunkBotHandler(TelegramInterface):
         self._create_model()
 
         # TODO: use custom db path here
-        self.db = ServerDataBase(save_path='./db.pkl')
+        self.db = ServerDataBase(save_path='./db.json')
 
         self.recipes_of_the_day = self.load_recipes_of_the_day()
-        print(self.recipes_of_the_day)
 
         # index of the cocktail in recipe of the day list, refactor here
         self.index = None
@@ -309,7 +340,6 @@ class GetDrunkBotHandler(TelegramInterface):
                     
             Enjoy! 💫
         """)
-        print('KEK', type(cocktail))
 
         self.db.update(chat_id, cocktail)
         self._send_message(chat_id, msg)
@@ -405,7 +435,8 @@ class GetDrunkBotHandler(TelegramInterface):
 
             abv = float(abv)
             volume = float(volume)
-            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients, recipe, image, useful_info, abv, volume))
+            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients,
+                                    recipe, image, useful_info, abv, volume))
 
         return recipes
 
