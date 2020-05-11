@@ -1,5 +1,4 @@
 import requests
-import textwrap
 import random
 import pickle
 import os
@@ -55,18 +54,19 @@ class ServerDataBase:
 
     def _initialize_record_if_needed(self, chat_id):
         if chat_id not in self.db:
-            self.db[chat_id] = dict(
-                total_alco=0,
-                cocktails_history=[],
-                cocktail=None,
-            )
+            self.db[chat_id] = {
+                'total_alcohol_absorbed': 0,
+                'cocktails_history': [],
+                'cocktail': None
+            }
 
     def update(self, chat_id, cocktail):
         self._initialize_record_if_needed(chat_id)
 
         self.db[chat_id]['cocktails_history'].append(cocktail)
         self.db[chat_id]['cocktail'] = cocktail
-        self.db[chat_id]['total_alco'] += cocktail.abv * cocktail.volume
+        self.db[chat_id]['total_alcohol_absorbed'] += \
+            cocktail.abv * cocktail.volume
 
         self._dump()
 
@@ -80,15 +80,15 @@ class ServerDataBase:
 
     def get_total_alcohol_absorbed(self, chat_id):
         self._initialize_record_if_needed(chat_id)
-        return self.db[chat_id]['total_alco']
+        return self.db[chat_id]['total_alcohol_absorbed']
 
     def end_current_session(self, chat_id):
         if chat_id in self.db:
-            self.db[chat_id] = dict(
-                total_alco=0,
-                cocktails_history=[],
-                cocktail=None,
-            )
+            self.db[chat_id] = {
+                "total_alcohol_absorbed": 0,
+                "cocktails_history": [],
+                "cocktail": None,
+            }
             self._dump()
 
     def _dump(self):
@@ -148,10 +148,10 @@ class GetDrunkBotHandler(TelegramInterface):
         if self.debug:
             print("Got a message: <%s>." % msg)
 
-        if msg == '\start'.strip():
+        if msg == '\\start'.strip():
             self._start_session_and_say_hello(chat_id)
 
-        elif msg == '\end':
+        elif msg == '\\end':
             self._end_session_and_say_bye(chat_id)
 
         elif msg == '\\recipe of the day':
@@ -240,7 +240,7 @@ class GetDrunkBotHandler(TelegramInterface):
                              photo_path=f'utils/{cocktail.orig_name}.png')
 
     def _send_intoxication_degree(self, chat_id):
-        cocktail_list = '\t\t\t\n'.join([
+        cocktail_list = '\n'.join([
             cocktail.name
             for cocktail in self.db.get_cocktails_history(chat_id)
         ])
@@ -310,7 +310,8 @@ class GetDrunkBotHandler(TelegramInterface):
             cocktail.name for cocktail in self.recipes_of_the_day])
         msg = self.normalize_text(f"""
             Menu 🍽️ 😋:
-            \n{cocktail_list.strip()}
+            
+            {cocktail_list.strip()}
         """)
         self._send_message(chat_id, msg)
 
@@ -319,8 +320,9 @@ class GetDrunkBotHandler(TelegramInterface):
             I am sorry :( I did not get what you mean.
             
             Please try again with these commands: 
-            `\start`, `\end`, `\\recipe`, `\photo`, `\intoxication level`, \
-            `\\recipe of the day`, `\explore`, `\info`, `\menu`
+            `\\start`, `\\end`, `\\recipe`, `\\photo`,
+            `\\intoxication level`, `\\recipe of the day`,
+            `\\explore`, `\\info`, `\\menu`
             
             Thank you! 🙏
         """)
