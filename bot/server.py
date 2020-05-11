@@ -2,7 +2,7 @@ import requests
 import textwrap
 import random
 import pickle
-import json
+import os
 import pandas as pd
 
 from flask import request, Flask
@@ -44,6 +44,49 @@ class TelegramInterface:
         requests.post(url, data=data)
 
 
+class ServerDataBase:
+    def __init__(self, save_path):
+        self.json_path = save_path
+        if os.path.exists(save_path):
+            with open(save_path, 'rb') as f:
+                self.db = pickle.load(f)
+        else:
+            self.db = {}
+
+    def _initialize_record_if_needed(self, chat_id):
+        if chat_id not in self.db:
+            self.db[chat_id] = dict(
+                total_alco=0,
+                cocktails_history=[],
+                cocktail=None,
+            )
+
+    def update(self, chat_id, cocktail):
+        self._initialize_record_if_needed(chat_id)
+
+        self.db[chat_id]['cocktails_history'].append(cocktail)
+        self.db[chat_id]['cocktail'] = cocktail
+        self.db[chat_id]['total_alco'] += cocktail.abv * cocktail.volume
+
+        self._dump()
+
+    def get_cocktail(self, chat_id):
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id]['cocktail']
+
+    def get_cocktails_history(self, chat_id):
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id]['cocktails_history']
+
+    def get_total_alcohol_absorbed(self, chat_id):
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id]['total_alco']
+
+    def _dump(self):
+        with open(self.json_path, 'wb') as f:
+            pickle.dump(self.db, f)
+
+
 class GetDrunkBotHandler(TelegramInterface):
     # TODO: add exploratory user request
     # TODO: Better formatting for special names? cocktail name etc.
@@ -68,12 +111,13 @@ class GetDrunkBotHandler(TelegramInterface):
         self.model = None
         self._create_model()
 
-        self.cocktail = None
+        # TODO: use custom db path here
+        self.db = ServerDataBase(save_path='./db.pkl')
 
-        self.total_alcohol_absorbed = 0
-        self.cocktails_history = []
         self.recipes_of_the_day = self.load_recipes_of_the_day()
-        self.index = None # index of the cocktail in recipe of the day list, refactor here
+
+        # index of the cocktail in recipe of the day list, refactor here
+        self.index = None
 
         self.debug = debug
         self._create_model()
@@ -108,19 +152,20 @@ class GetDrunkBotHandler(TelegramInterface):
             ingredients = self.parse_ingredients(msg)
             self._send_best_cocktail_with_ingredients(chat_id, ingredients)
 
-        elif msg == '\photo':
-            self._send_cocktail_image(chat_id, self.cocktail)
+        elif msg == '\\photo':
+            self._send_cocktail_image(chat_id, self.db.get_cocktail(chat_id))
 
-        elif msg == '\intoxication level':
+        elif msg == '\\intoxication level':
             self._send_intoxication_degree(chat_id)
 
-        elif msg == '\info':
-            self._send_cocktail_useful_info(chat_id, self.cocktail)
+        elif msg == '\\info':
+            self._send_cocktail_useful_info(chat_id,
+                                            self.db.get_cocktail(chat_id))
 
-        elif msg == '\menu':
+        elif msg == '\\menu':
             self._send_cocktails_menu(chat_id)
 
-        elif '\explore' in msg:
+        elif '\\explore' in msg:
             ingredients = self.parse_ingredients(msg)
             self._send_exploration_result(chat_id, ingredients)
         else:
@@ -128,7 +173,7 @@ class GetDrunkBotHandler(TelegramInterface):
 
     def _start_session_and_say_hello(self, chat_id):
         self.total_alcohol_absorbed = 0
-        msg = textwrap.dedent("""
+        msg = self.normalize_text("""
             Hey there, wanna get drunk? 💫
             
             Here is what I can do for you:
@@ -144,58 +189,64 @@ class GetDrunkBotHandler(TelegramInterface):
         self._send_message(chat_id, msg)
 
     def _end_session_and_say_bye(self, chat_id):
-        msg = textwrap.dedent("""
+        msg = self.normalize_text("""
             You’re welcome anytime! ❤️
             Bye 🥂
         """)
         self._send_message(chat_id, msg)
 
     def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
-        self.cocktail = self.model.predict(ingredients)
-        msg = textwrap.dedent(f"""
-            { self.cocktail.name }
+        if self.debug:
+            print('Model predict starts.')
+        cocktail = self.model.predict(ingredients)
+
+        msg = self.normalize_text(f"""
+            { cocktail.name }
             
-            Ingredients: { ', '.join(self.cocktail.ingredients).strip() }
+            Ingredients: { ', '.join(cocktail.ingredients).strip() }
             
-            Method: { self.cocktail.recipe }  
+            Method: { cocktail.recipe }  
             
             Enjoy! 💫
         """)
-        self.total_alcohol_absorbed += self.cocktail.abv * self.cocktail.volume
-        self.cocktails_history.append(self.cocktail)
+
+        self.db.update(chat_id, cocktail)
+
         self._send_message(chat_id, msg)
 
     def _send_cocktail_image(self, chat_id, cocktail):
         if cocktail is None:
             msg = "Oh 🤗 looks like you didn't select the cocktail. " \
                   "Let's try again, just say \\recipe!"
-            self._send_message(msg)
+            self._send_message(chat_id, msg)
         else:
             # TODO: fix here to send real image
-            msg = textwrap.dedent(f"""
+            msg = self.normalize_text(f"""
                 { cocktail.name }
             """)
             self._send_photo(chat_id, msg,
                              photo_path=f'utils/{cocktail.orig_name}.png')
 
     def _send_intoxication_degree(self, chat_id):
-        cocktail_list = '\n'.join(
-            [cocktail.name for cocktail in self.cocktails_history])
-        degree = self._get_intoxication_degree()
-        msg = textwrap.dedent(f"""
-            You are in {degree}. 
+        cocktail_list = '\t\t\t\n'.join([
+            cocktail.name
+            for cocktail in self.db.get_cocktails_history(chat_id)
+        ])
+        degree = self._get_intoxication_degree(chat_id)
+        msg = self.normalize_text(f"""
+            You are in {degree}.
             
             Here is the list of what you took: 
             {cocktail_list}
         """)
         self._send_message(chat_id, msg)
 
-    def _get_intoxication_degree(self):
+    def _get_intoxication_degree(self, chat_id):
         # 170 is avg female weight in the US in pounds, TODO: fix here
-        bac = 100 * self.total_alcohol_absorbed / 77110.7 / 0.55
-        print('BAC', bac)
+        total_alcohol_absorbed = self.db.get_total_alcohol_absorbed(chat_id)
+        bac = 100 * total_alcohol_absorbed / 77110.7 / 0.55
         if self.debug:
-            print('BAC', bac, self.total_alcohol_absorbed)
+            print('BAC', bac, total_alcohol_absorbed)
         if 0.0 <= bac <= 0.03:
             return "Sobriety 🙅 stage (1 out of 7)"
         elif 0.03 < bac <= 0.09:
@@ -216,7 +267,7 @@ class GetDrunkBotHandler(TelegramInterface):
             msg = "Oh 🤗 looks like you didn't select the cocktail. " \
                   "Let's try again, just say \\recipe!"
         else:
-            msg = textwrap.dedent(f"""
+            msg = self.normalize_text(f"""
                 {cocktail.name} {cocktail.useful_info}! 🔬
             """)
         self._send_message(chat_id, msg)
@@ -226,46 +277,45 @@ class GetDrunkBotHandler(TelegramInterface):
 
         if self.index is None:
             self.index = random.randint(0, len(self.recipes_of_the_day))
-        self.cocktail = self.recipes_of_the_day[self.index]
-        msg = textwrap.dedent(f"""
+        cocktail = self.recipes_of_the_day[self.index]
+        msg = self.normalize_text(f"""
             Our {weekday_name} menu 👩‍🍳🥳:
             
-            {self.cocktail.name}
+            {cocktail.name}
             
-            Ingredients: {', '.join(self.cocktail.ingredients).strip()}
+            Ingredients: {', '.join(cocktail.ingredients).strip()}
             
-            Method: {self.cocktail.recipe}  
+            Method: {cocktail.recipe}  
                     
             Enjoy! 💫
         """)
 
-        self.total_alcohol_absorbed += self.cocktail.abv * self.cocktail.volume
-        self.cocktails_history.append(self.cocktail)
+        self.db.update(chat_id, cocktail)
         self._send_message(chat_id, msg)
 
     def _send_cocktails_menu(self, chat_id):
         cocktail_list = '\n'.join([
             cocktail.name for cocktail in self.recipes_of_the_day])
-        msg = textwrap.dedent(f"""
-            Menu 🍽️ 😋: 
-            
-            {cocktail_list} 
+        msg = self.normalize_text(f"""
+            Menu 🍽️ 😋:
+            \n{cocktail_list.strip()}
         """)
         self._send_message(chat_id, msg)
 
     def _send_help_message(self, chat_id):
-        msg = textwrap.dedent("""
+        msg = self.normalize_text("""
             I am sorry :( I did not get what you mean.
             
             Please try again with these commands: 
-            `\start`, `\end`, `\\recipe`, `\photo`, `\intoxication level`, `\\recipe of the day`, `\explore`, `\info`, `\menu`
+            `\start`, `\end`, `\\recipe`, `\photo`, `\intoxication level`, \
+            `\\recipe of the day`, `\explore`, `\info`, `\menu`
             
             Thank you! 🙏
         """)
 
         self._send_message(chat_id, msg)
 
-    def _send_exploration_result(self, chat_id):
+    def _send_exploration_result(self, chat_id, ingredients):
         pass
 
     # TODO: do we need these methods?
@@ -287,6 +337,10 @@ class GetDrunkBotHandler(TelegramInterface):
     # def ask_to_send_day_recipe(self):
     #     pass
     @staticmethod
+    def normalize_text(text):
+        return '\n'.join([line.strip() for line in text.split('\n')])
+    
+    @staticmethod
     def parse_ingredients(msg):
         # TODO: might be done in different format
         try:
@@ -307,7 +361,10 @@ class GetDrunkBotHandler(TelegramInterface):
         recipes = []
         for row in data.iterrows():
             # TODO restructure?
-            name, ingredients, recipe, image, abv, volume, author, location, source = row[1]
+            (
+                name, ingredients, recipe, image, abv,
+                volume, author, location, source
+            ) = row[1]
 
             orig_name = name.replace('_', '').strip()
             name_with_emoji = emojis[name.replace('_', '').strip()]
@@ -332,7 +389,8 @@ class GetDrunkBotHandler(TelegramInterface):
 
 def create_server(args):
     app = Flask(__name__)
-    print('Init Bot')
+    if args.debug:
+        print('Init Bot')
     get_drunk_bot = GetDrunkBotHandler(
         token=args.token, hook_url=args.web_hook_url, debug=args.debug
     )
