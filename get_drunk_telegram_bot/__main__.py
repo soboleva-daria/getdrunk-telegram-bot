@@ -1,6 +1,6 @@
 import argparse
 
-from bot.server import create_server
+from get_drunk_telegram_bot.bot.server import create_server
 
 
 def parse_server_args():

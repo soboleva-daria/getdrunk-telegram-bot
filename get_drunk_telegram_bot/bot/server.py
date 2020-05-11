@@ -2,15 +2,22 @@ import requests
 import random
 import pickle
 import os
+import pathlib
+import dill
 import pandas as pd
 
 from flask import request, Flask
 from string import punctuation
 from datetime import datetime
+from copy import copy, deepcopy
 
-from model.predict import BaseModel, TFIdfCocktailModel, BertCocktailModel
+from get_drunk_telegram_bot.model.predict import (
+    BaseModel, TFIdfCocktailModel, BertCocktailModel)
 
-from drinks.cocktail import Cocktail
+from get_drunk_telegram_bot.drinks.cocktail import Cocktail
+
+
+UTILS_PATH = pathlib.Path('get_drunk_telegram_bot/utils')
 
 
 class TelegramInterface:
@@ -124,6 +131,7 @@ class GetDrunkBotHandler(TelegramInterface):
         self.db = ServerDataBase(save_path='./db.pkl')
 
         self.recipes_of_the_day = self.load_recipes_of_the_day()
+        print(self.recipes_of_the_day)
 
         # index of the cocktail in recipe of the day list, refactor here
         self.index = None
@@ -236,8 +244,8 @@ class GetDrunkBotHandler(TelegramInterface):
             msg = self.normalize_text(f"""
                 { cocktail.name }
             """)
-            self._send_photo(chat_id, msg,
-                             photo_path=f'utils/{cocktail.orig_name}.png')
+            self._send_photo(chat_id, msg, photo_path=str(
+                UTILS_PATH.joinpath(f'{cocktail.orig_name}.png')))
 
     def _send_intoxication_degree(self, chat_id):
         cocktail_list = '\n'.join([
@@ -301,6 +309,7 @@ class GetDrunkBotHandler(TelegramInterface):
                     
             Enjoy! 💫
         """)
+        print('KEK', type(cocktail))
 
         self.db.update(chat_id, cocktail)
         self._send_message(chat_id, msg)
@@ -365,11 +374,11 @@ class GetDrunkBotHandler(TelegramInterface):
     # TODO: put this method into drinks/preprocessing later?
     @staticmethod
     def load_recipes_of_the_day():
-        data = pd.read_csv('utils/05-CocktailRecipes.csv')[
+        data = pd.read_csv(str(UTILS_PATH.joinpath('05-CocktailRecipes.csv')))[
             ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'ABV',
              'VOLUME', 'AUTHOR', 'LOCATION', 'OriginalRecipeSource']
         ]
-        with open('utils/emoji.pkl', 'rb') as fin:
+        with open(str(UTILS_PATH.joinpath('emoji.pkl')), 'rb') as fin:
             emojis = pickle.load(fin)
 
         recipes = []
@@ -417,12 +426,9 @@ def create_server(args):
         if request.method == "POST":
             # data format may differ
             data = request.get_json(force=True)
-            try:
-                chat_id = data["message"]["chat"]["id"]
-                text = data["message"]["text"]
-                get_drunk_bot.process_message(chat_id, text)
-            except KeyError:
-                pass
+            chat_id = data["message"]["chat"]["id"]
+            text = data["message"]["text"]
+            get_drunk_bot.process_message(chat_id, text)
         else:
             return "Hello, world!"
 

@@ -28,3 +28,6 @@ class Cocktail:
     @image.setter
     def image(self, image):
         self._image = deepcopy(image)
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
