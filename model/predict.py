@@ -12,6 +12,7 @@ from typing import List
 
 class BaseModel:
     # BaseModel answers are hardcoded for demo only.
+    ORIG_NAME = 'Pina Colada'
     NAME = 'Pina Colada 🍍 🥃'
     INGREDIENTS = ['3 cl rum', '3 cl coconut cream', '9 cl pineapple juice']
     RECIPE = 'Mixed with crushed ice in blender until smooth, then pour into a chilled glass, garnish and serve.  '
@@ -23,6 +24,7 @@ class BaseModel:
     @staticmethod
     def predict(query):
         cocktail = Cocktail(
+            orig_name=BaseModel.ORIG_NAME,
             name=BaseModel.NAME,
             ingredients=BaseModel.INGREDIENTS,
             recipe=BaseModel.RECIPE,
