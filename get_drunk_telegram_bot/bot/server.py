@@ -1,16 +1,23 @@
 import requests
 import random
 import pickle
+import json
 import os
+import pathlib
 import pandas as pd
 
 from flask import request, Flask
 from string import punctuation
 from datetime import datetime
+from copy import deepcopy
 
-from model.predict import BaseModel, TFIdfCocktailModel, BertCocktailModel
+from get_drunk_telegram_bot.model.predict import (
+    BaseModel, TFIdfCocktailModel, BertCocktailModel)
 
-from drinks.cocktail import Cocktail
+from get_drunk_telegram_bot.drinks.cocktail import Cocktail
+
+
+UTILS_PATH = pathlib.Path('get_drunk_telegram_bot/utils')
 
 
 class TelegramInterface:
@@ -43,12 +50,44 @@ class TelegramInterface:
         requests.post(url, data=data)
 
 
+def decode_json(dct):
+    if "__cocktail__" in dct:
+        dct.pop("__cocktail__", None)
+        return Cocktail(**dct)
+    elif isinstance(dct, dict):
+        result = {}
+        for key, value in dct.items():
+            if key.isdigit():
+                result[int(key)] = value
+            else:
+                result[key] = value
+        return result
+
+    return dct
+
+
+def encode_json(obj):
+    if isinstance(obj, Cocktail):
+        dct = deepcopy(obj.__dict__)
+
+        dct['__cocktail__'] = True
+        for key, value in obj.__dict__.items():
+            if key.startswith('_'):
+                dct.pop(key, None)
+                dct[key.replace('_', '', 1)] = deepcopy(value)
+        return dct
+    elif isinstance(obj, map):
+        return list(obj)
+    else:
+        return json.JSONEncoder().default(obj)
+
+
 class ServerDataBase:
     def __init__(self, save_path):
         self.json_path = save_path
         if os.path.exists(save_path):
-            with open(save_path, 'rb') as f:
-                self.db = pickle.load(f)
+            with open(save_path, 'r', encoding='utf-8') as f:
+                self.db = json.load(f, object_hook=decode_json)
         else:
             self.db = {}
 
@@ -92,8 +131,8 @@ class ServerDataBase:
             self._dump()
 
     def _dump(self):
-        with open(self.json_path, 'wb') as f:
-            pickle.dump(self.db, f)
+        with open(self.json_path, 'w', encoding='utf-8') as f:
+            json.dump(self.db, f, default=encode_json, indent=4)
 
 
 class GetDrunkBotHandler(TelegramInterface):
@@ -121,7 +160,7 @@ class GetDrunkBotHandler(TelegramInterface):
         self._create_model()
 
         # TODO: use custom db path here
-        self.db = ServerDataBase(save_path='./db.pkl')
+        self.db = ServerDataBase(save_path='./db.json')
 
         self.recipes_of_the_day = self.load_recipes_of_the_day()
 
@@ -236,8 +275,8 @@ class GetDrunkBotHandler(TelegramInterface):
             msg = self.normalize_text(f"""
                 { cocktail.name }
             """)
-            self._send_photo(chat_id, msg,
-                             photo_path=f'utils/{cocktail.orig_name}.png')
+            self._send_photo(chat_id, msg, photo_path=str(
+                UTILS_PATH.joinpath(f'{cocktail.orig_name}.png')))
 
     def _send_intoxication_degree(self, chat_id):
         cocktail_list = '\n'.join([
@@ -365,11 +404,11 @@ class GetDrunkBotHandler(TelegramInterface):
     # TODO: put this method into drinks/preprocessing later?
     @staticmethod
     def load_recipes_of_the_day():
-        data = pd.read_csv('utils/05-CocktailRecipes.csv')[
+        data = pd.read_csv(str(UTILS_PATH.joinpath('05-CocktailRecipes.csv')))[
             ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'ABV',
              'VOLUME', 'AUTHOR', 'LOCATION', 'OriginalRecipeSource']
         ]
-        with open('utils/emoji.pkl', 'rb') as fin:
+        with open(str(UTILS_PATH.joinpath('emoji.pkl')), 'rb') as fin:
             emojis = pickle.load(fin)
 
         recipes = []
@@ -396,7 +435,8 @@ class GetDrunkBotHandler(TelegramInterface):
 
             abv = float(abv)
             volume = float(volume)
-            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients, recipe, image, useful_info, abv, volume))
+            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients,
+                                    recipe, image, useful_info, abv, volume))
 
         return recipes
 
@@ -417,12 +457,9 @@ def create_server(args):
         if request.method == "POST":
             # data format may differ
             data = request.get_json(force=True)
-            try:
-                chat_id = data["message"]["chat"]["id"]
-                text = data["message"]["text"]
-                get_drunk_bot.process_message(chat_id, text)
-            except KeyError:
-                pass
+            chat_id = data["message"]["chat"]["id"]
+            text = data["message"]["text"]
+            get_drunk_bot.process_message(chat_id, text)
         else:
             return "Hello, world!"
 

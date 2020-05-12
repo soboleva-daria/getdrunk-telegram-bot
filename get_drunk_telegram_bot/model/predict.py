@@ -1,9 +1,5 @@
-# TODO: fixme later
-import sys
-sys.path.append('../')
-
-from drinks.cocktail import Cocktail
-from drinks.preprocessing import RawDataset
+from get_drunk_telegram_bot.drinks.cocktail import Cocktail
+from get_drunk_telegram_bot.drinks.preprocessing import RawDataset
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sklearn as sk
