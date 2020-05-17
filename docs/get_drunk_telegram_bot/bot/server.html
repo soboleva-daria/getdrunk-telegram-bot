@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>get_drunk_telegram_bot.bot.server API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>get_drunk_telegram_bot.bot.server</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import requests
+import random
+import pickle
+import json
+import os
+import pathlib
+import pandas as pd
+
+from flask import request, Flask
+from string import punctuation
+from datetime import datetime
+
+from get_drunk_telegram_bot.model.predict import (
+    BaseModel, TFIdfCocktailModel, BertCocktailModel)
+
+from get_drunk_telegram_bot.drinks.cocktail import Cocktail
+
+from get_drunk_telegram_bot.utils.utils import encode_json, decode_json
+
+UTILS_PATH = pathlib.Path(&#39;get_drunk_telegram_bot/utils&#39;)
+
+
+class TelegramInterface:
+    &#34;&#34;&#34;
+    TelegramInterface class provides the basic functionality for GetDrunkBotHandler.
+
+    :param token: str, telegram bot token
+
+    :param hook_url, telegram bot hook_url (provided by ngrok, see README.md)
+    
+    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    &#34;&#34;&#34;
+    def __init__(self, token, hook_url, debug=False):
+        if debug:
+            print(&#39;Starting tg interface...&#39;)
+        self._bot_url = f&#34;https://api.telegram.org/bot{token}&#34;
+        self._set_web_hook(hook_url)
+        self._chat_id = None
+        if debug:
+            print(&#39;tg interface started successfully.&#39;)
+
+    def _set_web_hook(self, hook_url):
+        method = &#34;setWebhook&#34;
+        url = f&#34;{self._bot_url}/{method}&#34;
+        data = {&#34;url&#34;: hook_url}
+        requests.post(url, data=data)
+
+    def _send_photo(self, chat_id, text, photo_path):
+        method = &#34;sendPhoto&#34;
+        url = f&#34;{self._bot_url}/{method}&#34;
+        data = {&#34;chat_id&#34;: chat_id, &#39;caption&#39;: text}
+        with open(photo_path, &#34;rb&#34;) as image_file:
+            requests.post(url, data=data, files={&#34;photo&#34;: image_file})
+
+    def _send_message(self, chat_id, text):
+        method = &#34;sendMessage&#34;
+        url = f&#34;{self._bot_url}/{method}&#34;
+        data = {&#34;chat_id&#34;: chat_id, &#34;text&#34;: text}
+        requests.post(url, data=data)
+
+
+class ServerDataBase:
+    &#34;&#34;&#34;
+    ServerDataBase saves an information about user history of drinks or amount of total alcohol absorbed.
+
+    :param save_path: str, path to the local database.
+    &#34;&#34;&#34;
+    def __init__(self, save_path):
+        self.json_path = save_path
+        if os.path.exists(save_path):
+            with open(save_path, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+                self.db = json.load(f, object_hook=decode_json)
+        else:
+            self.db = {}
+
+    def _initialize_record_if_needed(self, chat_id):
+        &#34;&#34;&#34;
+        Initializes total_alcohol_absorbed and cocktails history in the beginning of the session.
+
+        :param chat_id: str, from which the message was received and where to send the response.
+        &#34;&#34;&#34;
+        if chat_id not in self.db:
+            self.db[chat_id] = {
+                &#39;total_alcohol_absorbed&#39;: 0,
+                &#39;cocktails_history&#39;: [],
+                &#39;cocktail&#39;: None
+            }
+
+    def update(self, chat_id, cocktail):
+        &#34;&#34;&#34;
+        Updates cocktails history and total_alcohol_absorbed after communication with the user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :param cocktail: Cocktail instance.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+
+        self.db[chat_id][&#39;cocktails_history&#39;].append(cocktail)
+        self.db[chat_id][&#39;cocktail&#39;] = cocktail
+        self.db[chat_id][&#39;total_alcohol_absorbed&#39;] += \
+            cocktail.abv * cocktail.volume
+
+        self._dump()
+
+    def get_cocktail(self, chat_id):
+        &#34;&#34;&#34;
+        Returns the most recent cocktail taken by user according to communication history.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: Cocktail instance, the most recent cocktail taken by user.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id][&#39;cocktail&#39;]
+
+    def get_cocktails_history(self, chat_id):
+        &#34;&#34;&#34;
+        Return full cocktails history for the specific user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: list, full user cocktails history.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id][&#39;cocktails_history&#39;]
+
+    def get_total_alcohol_absorbed(self, chat_id):
+        &#34;&#34;&#34;
+        Return total amount of alcohol absorbed by user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: int, total amount of alcohol absorbed by user.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id][&#39;total_alcohol_absorbed&#39;]
+
+    def end_current_session(self, chat_id):
+        &#34;&#34;&#34;
+        Ends the session with user. Update total_alcohol_absorbed to 0 and clean cocktails_history.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+        &#34;&#34;&#34;
+        if chat_id in self.db:
+            self.db[chat_id] = {
+                &#34;total_alcohol_absorbed&#34;: 0,
+                &#34;cocktails_history&#34;: [],
+                &#34;cocktail&#34;: None,
+            }
+            self._dump()
+
+    def _dump(self):
+        with open(self.json_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+            json.dump(self.db, f, default=encode_json, indent=4)
+
+
+class GetDrunkBotHandler(TelegramInterface):
+    &#34;&#34;&#34;
+    class GetDrunkBotHandler is responsible for all kind of user-server communication from processing messages
+    to sending commands in return.
+
+    :param model_name: str, should be one of the {TFIdfCocktailModel, BertCocktailModel, BaseModel} (default=BaseModel);
+
+    :param train: str, path to the train table (default=None);
+
+    :param model_config_file: str, path to model config (default=None);
+
+    :param model_vocab_file: str, path to model vocab file (default=None);
+
+    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    &#34;&#34;&#34;
+    # TODO: add exploratory user request
+    # TODO: Better formatting for special names? cocktail name etc.
+    # TODO: more information for user about what cocktail is currently processing.
+    # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?
+    def __init__(
+            self,
+            model_name=&#39;BaseModel&#39;,
+            train=None,
+            model_config_file=None,
+            model_vocab_file=None,
+            debug=False,
+            **telegram_kwargs
+    ):
+        super(GetDrunkBotHandler, self).__init__(
+            **telegram_kwargs, debug=debug)
+
+        self.model_name = model_name
+        self.train = train
+        self.model_config_file = model_config_file
+        self.model_vocab_file = model_vocab_file
+        self.model = None
+        self._create_model()
+
+        # TODO: use custom db path here
+        self.db = ServerDataBase(save_path=&#39;./db.json&#39;)
+
+        self.recipes_of_the_day = self.load_recipes_of_the_day()
+
+        # index of the cocktail in recipe of the day list, refactor here
+        self.index = None
+
+        self.debug = debug
+        self._create_model()
+
+    def _create_model(self):
+        if self.model_name == &#39;BaseModel&#39;:
+            self.model = BaseModel()
+        elif self.model_name == &#39;TFIdfCocktailModel&#39;:
+            self.model = TFIdfCocktailModel(self.train).train_on_recipes()
+        elif self.model_name == &#39;BertCocktailModel&#39;:
+            self.model = BertCocktailModel(self.model_config_file, self.model_vocab_file)
+        else:
+            raise ValueError(
+                f&#34;Error in model_name. Available models: &#34;
+                f&#34;{[&#39;TFIdfCocktailModel&#39;, &#39;BertCocktailModel&#39;, &#39;BaseModel&#39;]}, &#34;
+                f&#34;Got: {self.model_name}&#34;)
+
+    def process_message(self, chat_id, msg):
+        &#34;&#34;&#34;
+        Process message from user and send the response back.
+
+        :param chat_id: str, from which the message was received and where to send the response.
+        :param msg: str, message that was sent by user.
+        &#34;&#34;&#34;
+        if self.debug:
+            print(&#34;Got a message: &lt;%s&gt;.&#34; % msg)
+
+        if msg == &#39;\\start&#39;.strip():
+            self._start_session_and_say_hello(chat_id)
+
+        elif msg == &#39;\\end&#39;:
+            self._end_session_and_say_bye(chat_id)
+
+        elif msg == &#39;\\recipe of the day&#39;:
+            self._send_day_cocktail(chat_id)
+
+        elif &#39;\\recipe&#39; in msg:
+            ingredients = self.parse_ingredients(msg)
+            self._send_best_cocktail_with_ingredients(chat_id, ingredients)
+
+        elif msg == &#39;\\photo&#39;:
+            self._send_cocktail_image(chat_id, self.db.get_cocktail(chat_id))
+
+        elif msg == &#39;\\intoxication level&#39;:
+            self._send_intoxication_degree(chat_id)
+
+        elif msg == &#39;\\info&#39;:
+            self._send_cocktail_useful_info(chat_id,
+                                            self.db.get_cocktail(chat_id))
+
+        elif msg == &#39;\\menu&#39;:
+            self._send_cocktails_menu(chat_id)
+
+        elif &#39;\\explore&#39; in msg:
+            ingredients = self.parse_ingredients(msg)
+            self._send_exploration_result(chat_id, ingredients)
+        else:
+            self._send_help_message(chat_id)
+
+    def _start_session_and_say_hello(self, chat_id):
+        self.db.end_current_session(chat_id)
+        msg = self.normalize_text(&#34;&#34;&#34;
+            Hey there, wanna get drunk? 💫
+            
+            Here is what I can do for you:
+            
+            — find cocktail recipe with your ingredients 🥂
+            
+            — tell your current intoxication level 🐙
+            
+            — provide recipe of the day 💜
+            
+            — explore cocktails for you  💻
+        &#34;&#34;&#34;)
+
+        self._send_message(chat_id, msg)
+
+    def _end_session_and_say_bye(self, chat_id):
+        msg = self.normalize_text(&#34;&#34;&#34;
+            Your cocktail history is empty now.
+            You’re welcome anytime! ❤️
+            Bye 🥂
+        &#34;&#34;&#34;)
+        self.db.end_current_session(chat_id)
+        self._send_message(chat_id, msg)
+
+    def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
+        if self.debug:
+            print(&#39;Model predict starts.&#39;)
+        cocktail = self.model.predict(ingredients)
+
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            { cocktail.name }
+            
+            Ingredients: { &#39;, &#39;.join(cocktail.ingredients).strip() }
+            
+            Method: { cocktail.recipe }  
+            
+            Enjoy! 💫
+        &#34;&#34;&#34;)
+
+        self.db.update(chat_id, cocktail)
+
+        self._send_message(chat_id, msg)
+
+    def _send_cocktail_image(self, chat_id, cocktail):
+        if cocktail is None:
+            msg = &#34;Oh 🤗 looks like you didn&#39;t select the cocktail. &#34; \
+                  &#34;Let&#39;s try again, just say \\recipe!&#34;
+            self._send_message(chat_id, msg)
+        else:
+            # TODO: fix here to send real image
+            msg = self.normalize_text(f&#34;&#34;&#34;
+                { cocktail.name }
+            &#34;&#34;&#34;)
+            self._send_photo(chat_id, msg, photo_path=str(
+                UTILS_PATH.joinpath(f&#39;{cocktail.orig_name}.png&#39;)))
+
+    def _send_intoxication_degree(self, chat_id):
+        cocktail_list = &#39;\n&#39;.join([
+            cocktail.name
+            for cocktail in self.db.get_cocktails_history(chat_id)
+        ])
+        degree = self._get_intoxication_degree(chat_id)
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            You are in {degree}.
+            
+            Here is the list of what you took: 
+            {cocktail_list}
+        &#34;&#34;&#34;)
+        self._send_message(chat_id, msg)
+
+    def _get_intoxication_degree(self, chat_id):
+        # 170 is avg female weight in the US in pounds, TODO: fix here
+        total_alcohol_absorbed = self.db.get_total_alcohol_absorbed(chat_id)
+        bac = 100 * total_alcohol_absorbed / 77110.7 / 0.55
+        if self.debug:
+            print(&#39;BAC&#39;, bac, total_alcohol_absorbed)
+        if 0.0 &lt;= bac &lt;= 0.03:
+            return &#34;Sobriety 🙅 stage (1 out of 7)&#34;
+        elif 0.03 &lt; bac &lt;= 0.09:
+            return &#39;Euphoria 🦄 stage (2 out of 7)&#39;
+        elif 0.09 &lt; bac &lt;= 0.18:
+            return &#39;Excitement 🥳 stage (3 out of 7)&#39;
+        elif 0.18 &lt; bac &lt;= 0.30:
+            return &#39;Confusion 🙈 stage (4 out of 7)&#39;
+        elif 0.30 &lt; bac &lt;= 0.35:
+            return &#34;Stupor 🐨 stage (5 out of 7)&#34;
+        elif 0.35 &lt; bac &lt;= 0.45:
+            return &#39;Coma 🗿 stage (6 out of 7)&#39;
+        else:
+            return &#39;Death 💀 stage (7 out of 7). I will miss you 🥺&#39;
+
+    def _send_cocktail_useful_info(self, chat_id, cocktail):
+        if cocktail is None:
+            msg = &#34;Oh 🤗 looks like you didn&#39;t select the cocktail. &#34; \
+                  &#34;Let&#39;s try again, just say \\recipe!&#34;
+        else:
+            msg = self.normalize_text(f&#34;&#34;&#34;
+                {cocktail.name} {cocktail.useful_info}! 🔬
+            &#34;&#34;&#34;)
+        self._send_message(chat_id, msg)
+
+    def _send_day_cocktail(self, chat_id):
+        weekday_name = datetime.today().strftime(&#34;%A&#34;)
+
+        if self.index is None:
+            self.index = random.randint(0, len(self.recipes_of_the_day))
+        cocktail = self.recipes_of_the_day[self.index]
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            Our {weekday_name} menu 👩‍🍳🥳:
+            
+            {cocktail.name}
+            
+            Ingredients: {&#39;, &#39;.join(cocktail.ingredients).strip()}
+            
+            Method: {cocktail.recipe}  
+                    
+            Enjoy! 💫
+        &#34;&#34;&#34;)
+
+        self.db.update(chat_id, cocktail)
+        self._send_message(chat_id, msg)
+
+    def _send_cocktails_menu(self, chat_id):
+        cocktail_list = &#39;\n&#39;.join([
+            cocktail.name for cocktail in self.recipes_of_the_day])
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            Menu 🍽️ 😋:
+            
+            {cocktail_list.strip()}
+        &#34;&#34;&#34;)
+        self._send_message(chat_id, msg)
+
+    def _send_help_message(self, chat_id):
+        msg = self.normalize_text(&#34;&#34;&#34;
+            I am sorry :( I did not get what you mean.
+            
+            Please try again with these commands: 
+            `\\start`, `\\end`, `\\recipe`, `\\photo`,
+            `\\intoxication level`, `\\recipe of the day`,
+            `\\explore`, `\\info`, `\\menu`
+            
+            Thank you! 🙏
+        &#34;&#34;&#34;)
+
+        self._send_message(chat_id, msg)
+
+    def _send_exploration_result(self, chat_id, ingredients):
+        pass
+
+    # TODO: do we need these methods?
+    # def ask_for_cocktail_ingredients(self):
+    #     pass
+
+    # def ask_to_end_session_and_say_bye(self):
+    #     pass
+
+    # def ask_to_send_cocktail_recipe(self):
+    #     pass
+
+    # def ask_to_send_cocktail_image(self):
+    #     pass
+    #
+    # def ask_to_send_cocktail_useful_info(self):
+    #     pass
+
+    # def ask_to_send_day_recipe(self):
+    #     pass
+    @staticmethod
+    def normalize_text(text):
+        &#34;&#34;&#34;
+        Provides basic normalization by removing trailing spaces from text.
+
+        :param text: str, text to send to user.
+        &#34;&#34;&#34;
+        return &#39;\n&#39;.join([line.strip() for line in text.split(&#39;\n&#39;)])
+    
+    @staticmethod
+    def parse_ingredients(text):
+        &#34;&#34;&#34;
+        Provides basic parsing of the ingredients sent by user.
+
+        :param text: str, text from user with ingredients.
+        &#34;&#34;&#34;
+        # TODO: might be done in different format
+        try:
+            return text[text.index(&#39;\\recipe&#39;) + len(&#39;\\recipe&#39;):].strip().split(punctuation)
+        except ValueError:
+            return []
+
+    # TODO: put this method into drinks/preprocessing later?
+    @staticmethod
+    def load_recipes_of_the_day():
+        &#34;&#34;&#34;
+        Load information about recipes of the day (local 05-CocktailRecipes.csv table).
+        &#34;&#34;&#34;
+        data = pd.read_csv(str(UTILS_PATH.joinpath(&#39;05-CocktailRecipes.csv&#39;)))[
+            [&#39;RecipeName&#39;, &#39;Ingredients&#39;, &#39;Preparation&#39;, &#39;IMAGE&#39;, &#39;ABV&#39;,
+             &#39;VOLUME&#39;, &#39;AUTHOR&#39;, &#39;LOCATION&#39;, &#39;OriginalRecipeSource&#39;]
+        ]
+        with open(str(UTILS_PATH.joinpath(&#39;emoji.pkl&#39;)), &#39;rb&#39;) as fin:
+            emojis = pickle.load(fin)
+
+        recipes = []
+        for row in data.iterrows():
+            # TODO restructure?
+            (
+                name, ingredients, recipe, image, abv,
+                volume, author, location, source
+            ) = row[1]
+
+            orig_name = name.replace(&#39;_&#39;, &#39;&#39;).strip()
+            name_with_emoji = emojis[name.replace(&#39;_&#39;, &#39;&#39;).strip()]
+            ingredients = map(lambda x: x.strip(), ingredients.split(&#39;\n&#39;))
+            recipe = recipe.strip()
+            author = str(author).strip()
+            location = str(location).strip()
+
+            useful_info = (
+                f&#34;was officially invented by the bartender &#34;
+                f&#34;named {author} in {location}&#34;
+                if author != &#39;nan&#39;
+                else f&#34;was officially found in the source: {source}&#34;
+            )
+
+            abv = float(abv)
+            volume = float(volume)
+            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients,
+                                    recipe, image, useful_info, abv, volume))
+
+        return recipes
+
+
+def create_server(args):
+    &#34;&#34;&#34;
+    Starts get-drunk-telegram bot.
+
+    :param args: --port, --token, --web-hook-url and --debug params specified.
+    &#34;&#34;&#34;
+    app = Flask(__name__)
+    if args.debug:
+        print(&#39;Init Bot&#39;)
+    get_drunk_bot = GetDrunkBotHandler(
+        token=args.token, hook_url=args.web_hook_url, debug=args.debug
+    )
+
+    @app.route(&#39;/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+    def post():
+        &#34;&#34;&#34;
+        Handles every user message.
+        &#34;&#34;&#34;
+        if request.method == &#34;POST&#34;:
+            # data format may differ
+            data = request.get_json(force=True)
+            chat_id = data[&#34;message&#34;][&#34;chat&#34;][&#34;id&#34;]
+            text = data[&#34;message&#34;][&#34;text&#34;]
+            get_drunk_bot.process_message(chat_id, text)
+        else:
+            return &#34;Hello, world!&#34;
+
+        return {&#34;ok&#34;: True}
+
+    return app</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="get_drunk_telegram_bot.bot.server.create_server"><code class="name flex">
+<span>def <span class="ident">create_server</span></span>(<span>args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Starts get-drunk-telegram bot.</p>
+<p>:param args: &ndash;port, &ndash;token, &ndash;web-hook-url and &ndash;debug params specified.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_server(args):
+    &#34;&#34;&#34;
+    Starts get-drunk-telegram bot.
+
+    :param args: --port, --token, --web-hook-url and --debug params specified.
+    &#34;&#34;&#34;
+    app = Flask(__name__)
+    if args.debug:
+        print(&#39;Init Bot&#39;)
+    get_drunk_bot = GetDrunkBotHandler(
+        token=args.token, hook_url=args.web_hook_url, debug=args.debug
+    )
+
+    @app.route(&#39;/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+    def post():
+        &#34;&#34;&#34;
+        Handles every user message.
+        &#34;&#34;&#34;
+        if request.method == &#34;POST&#34;:
+            # data format may differ
+            data = request.get_json(force=True)
+            chat_id = data[&#34;message&#34;][&#34;chat&#34;][&#34;id&#34;]
+            text = data[&#34;message&#34;][&#34;text&#34;]
+            get_drunk_bot.process_message(chat_id, text)
+        else:
+            return &#34;Hello, world!&#34;
+
+        return {&#34;ok&#34;: True}
+
+    return app</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler"><code class="flex name class">
+<span>class <span class="ident">GetDrunkBotHandler</span></span>
+<span>(</span><span>model_name='BaseModel', train=None, model_config_file=None, model_vocab_file=None, debug=False, **telegram_kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>class GetDrunkBotHandler is responsible for all kind of user-server communication from processing messages
+to sending commands in return.</p>
+<p>:param model_name: str, should be one of the {TFIdfCocktailModel, BertCocktailModel, BaseModel} (default=BaseModel);</p>
+<p>:param train: str, path to the train table (default=None);</p>
+<p>:param model_config_file: str, path to model config (default=None);</p>
+<p>:param model_vocab_file: str, path to model vocab file (default=None);</p>
+<p>:param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetDrunkBotHandler(TelegramInterface):
+    &#34;&#34;&#34;
+    class GetDrunkBotHandler is responsible for all kind of user-server communication from processing messages
+    to sending commands in return.
+
+    :param model_name: str, should be one of the {TFIdfCocktailModel, BertCocktailModel, BaseModel} (default=BaseModel);
+
+    :param train: str, path to the train table (default=None);
+
+    :param model_config_file: str, path to model config (default=None);
+
+    :param model_vocab_file: str, path to model vocab file (default=None);
+
+    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    &#34;&#34;&#34;
+    # TODO: add exploratory user request
+    # TODO: Better formatting for special names? cocktail name etc.
+    # TODO: more information for user about what cocktail is currently processing.
+    # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?
+    def __init__(
+            self,
+            model_name=&#39;BaseModel&#39;,
+            train=None,
+            model_config_file=None,
+            model_vocab_file=None,
+            debug=False,
+            **telegram_kwargs
+    ):
+        super(GetDrunkBotHandler, self).__init__(
+            **telegram_kwargs, debug=debug)
+
+        self.model_name = model_name
+        self.train = train
+        self.model_config_file = model_config_file
+        self.model_vocab_file = model_vocab_file
+        self.model = None
+        self._create_model()
+
+        # TODO: use custom db path here
+        self.db = ServerDataBase(save_path=&#39;./db.json&#39;)
+
+        self.recipes_of_the_day = self.load_recipes_of_the_day()
+
+        # index of the cocktail in recipe of the day list, refactor here
+        self.index = None
+
+        self.debug = debug
+        self._create_model()
+
+    def _create_model(self):
+        if self.model_name == &#39;BaseModel&#39;:
+            self.model = BaseModel()
+        elif self.model_name == &#39;TFIdfCocktailModel&#39;:
+            self.model = TFIdfCocktailModel(self.train).train_on_recipes()
+        elif self.model_name == &#39;BertCocktailModel&#39;:
+            self.model = BertCocktailModel(self.model_config_file, self.model_vocab_file)
+        else:
+            raise ValueError(
+                f&#34;Error in model_name. Available models: &#34;
+                f&#34;{[&#39;TFIdfCocktailModel&#39;, &#39;BertCocktailModel&#39;, &#39;BaseModel&#39;]}, &#34;
+                f&#34;Got: {self.model_name}&#34;)
+
+    def process_message(self, chat_id, msg):
+        &#34;&#34;&#34;
+        Process message from user and send the response back.
+
+        :param chat_id: str, from which the message was received and where to send the response.
+        :param msg: str, message that was sent by user.
+        &#34;&#34;&#34;
+        if self.debug:
+            print(&#34;Got a message: &lt;%s&gt;.&#34; % msg)
+
+        if msg == &#39;\\start&#39;.strip():
+            self._start_session_and_say_hello(chat_id)
+
+        elif msg == &#39;\\end&#39;:
+            self._end_session_and_say_bye(chat_id)
+
+        elif msg == &#39;\\recipe of the day&#39;:
+            self._send_day_cocktail(chat_id)
+
+        elif &#39;\\recipe&#39; in msg:
+            ingredients = self.parse_ingredients(msg)
+            self._send_best_cocktail_with_ingredients(chat_id, ingredients)
+
+        elif msg == &#39;\\photo&#39;:
+            self._send_cocktail_image(chat_id, self.db.get_cocktail(chat_id))
+
+        elif msg == &#39;\\intoxication level&#39;:
+            self._send_intoxication_degree(chat_id)
+
+        elif msg == &#39;\\info&#39;:
+            self._send_cocktail_useful_info(chat_id,
+                                            self.db.get_cocktail(chat_id))
+
+        elif msg == &#39;\\menu&#39;:
+            self._send_cocktails_menu(chat_id)
+
+        elif &#39;\\explore&#39; in msg:
+            ingredients = self.parse_ingredients(msg)
+            self._send_exploration_result(chat_id, ingredients)
+        else:
+            self._send_help_message(chat_id)
+
+    def _start_session_and_say_hello(self, chat_id):
+        self.db.end_current_session(chat_id)
+        msg = self.normalize_text(&#34;&#34;&#34;
+            Hey there, wanna get drunk? 💫
+            
+            Here is what I can do for you:
+            
+            — find cocktail recipe with your ingredients 🥂
+            
+            — tell your current intoxication level 🐙
+            
+            — provide recipe of the day 💜
+            
+            — explore cocktails for you  💻
+        &#34;&#34;&#34;)
+
+        self._send_message(chat_id, msg)
+
+    def _end_session_and_say_bye(self, chat_id):
+        msg = self.normalize_text(&#34;&#34;&#34;
+            Your cocktail history is empty now.
+            You’re welcome anytime! ❤️
+            Bye 🥂
+        &#34;&#34;&#34;)
+        self.db.end_current_session(chat_id)
+        self._send_message(chat_id, msg)
+
+    def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
+        if self.debug:
+            print(&#39;Model predict starts.&#39;)
+        cocktail = self.model.predict(ingredients)
+
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            { cocktail.name }
+            
+            Ingredients: { &#39;, &#39;.join(cocktail.ingredients).strip() }
+            
+            Method: { cocktail.recipe }  
+            
+            Enjoy! 💫
+        &#34;&#34;&#34;)
+
+        self.db.update(chat_id, cocktail)
+
+        self._send_message(chat_id, msg)
+
+    def _send_cocktail_image(self, chat_id, cocktail):
+        if cocktail is None:
+            msg = &#34;Oh 🤗 looks like you didn&#39;t select the cocktail. &#34; \
+                  &#34;Let&#39;s try again, just say \\recipe!&#34;
+            self._send_message(chat_id, msg)
+        else:
+            # TODO: fix here to send real image
+            msg = self.normalize_text(f&#34;&#34;&#34;
+                { cocktail.name }
+            &#34;&#34;&#34;)
+            self._send_photo(chat_id, msg, photo_path=str(
+                UTILS_PATH.joinpath(f&#39;{cocktail.orig_name}.png&#39;)))
+
+    def _send_intoxication_degree(self, chat_id):
+        cocktail_list = &#39;\n&#39;.join([
+            cocktail.name
+            for cocktail in self.db.get_cocktails_history(chat_id)
+        ])
+        degree = self._get_intoxication_degree(chat_id)
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            You are in {degree}.
+            
+            Here is the list of what you took: 
+            {cocktail_list}
+        &#34;&#34;&#34;)
+        self._send_message(chat_id, msg)
+
+    def _get_intoxication_degree(self, chat_id):
+        # 170 is avg female weight in the US in pounds, TODO: fix here
+        total_alcohol_absorbed = self.db.get_total_alcohol_absorbed(chat_id)
+        bac = 100 * total_alcohol_absorbed / 77110.7 / 0.55
+        if self.debug:
+            print(&#39;BAC&#39;, bac, total_alcohol_absorbed)
+        if 0.0 &lt;= bac &lt;= 0.03:
+            return &#34;Sobriety 🙅 stage (1 out of 7)&#34;
+        elif 0.03 &lt; bac &lt;= 0.09:
+            return &#39;Euphoria 🦄 stage (2 out of 7)&#39;
+        elif 0.09 &lt; bac &lt;= 0.18:
+            return &#39;Excitement 🥳 stage (3 out of 7)&#39;
+        elif 0.18 &lt; bac &lt;= 0.30:
+            return &#39;Confusion 🙈 stage (4 out of 7)&#39;
+        elif 0.30 &lt; bac &lt;= 0.35:
+            return &#34;Stupor 🐨 stage (5 out of 7)&#34;
+        elif 0.35 &lt; bac &lt;= 0.45:
+            return &#39;Coma 🗿 stage (6 out of 7)&#39;
+        else:
+            return &#39;Death 💀 stage (7 out of 7). I will miss you 🥺&#39;
+
+    def _send_cocktail_useful_info(self, chat_id, cocktail):
+        if cocktail is None:
+            msg = &#34;Oh 🤗 looks like you didn&#39;t select the cocktail. &#34; \
+                  &#34;Let&#39;s try again, just say \\recipe!&#34;
+        else:
+            msg = self.normalize_text(f&#34;&#34;&#34;
+                {cocktail.name} {cocktail.useful_info}! 🔬
+            &#34;&#34;&#34;)
+        self._send_message(chat_id, msg)
+
+    def _send_day_cocktail(self, chat_id):
+        weekday_name = datetime.today().strftime(&#34;%A&#34;)
+
+        if self.index is None:
+            self.index = random.randint(0, len(self.recipes_of_the_day))
+        cocktail = self.recipes_of_the_day[self.index]
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            Our {weekday_name} menu 👩‍🍳🥳:
+            
+            {cocktail.name}
+            
+            Ingredients: {&#39;, &#39;.join(cocktail.ingredients).strip()}
+            
+            Method: {cocktail.recipe}  
+                    
+            Enjoy! 💫
+        &#34;&#34;&#34;)
+
+        self.db.update(chat_id, cocktail)
+        self._send_message(chat_id, msg)
+
+    def _send_cocktails_menu(self, chat_id):
+        cocktail_list = &#39;\n&#39;.join([
+            cocktail.name for cocktail in self.recipes_of_the_day])
+        msg = self.normalize_text(f&#34;&#34;&#34;
+            Menu 🍽️ 😋:
+            
+            {cocktail_list.strip()}
+        &#34;&#34;&#34;)
+        self._send_message(chat_id, msg)
+
+    def _send_help_message(self, chat_id):
+        msg = self.normalize_text(&#34;&#34;&#34;
+            I am sorry :( I did not get what you mean.
+            
+            Please try again with these commands: 
+            `\\start`, `\\end`, `\\recipe`, `\\photo`,
+            `\\intoxication level`, `\\recipe of the day`,
+            `\\explore`, `\\info`, `\\menu`
+            
+            Thank you! 🙏
+        &#34;&#34;&#34;)
+
+        self._send_message(chat_id, msg)
+
+    def _send_exploration_result(self, chat_id, ingredients):
+        pass
+
+    # TODO: do we need these methods?
+    # def ask_for_cocktail_ingredients(self):
+    #     pass
+
+    # def ask_to_end_session_and_say_bye(self):
+    #     pass
+
+    # def ask_to_send_cocktail_recipe(self):
+    #     pass
+
+    # def ask_to_send_cocktail_image(self):
+    #     pass
+    #
+    # def ask_to_send_cocktail_useful_info(self):
+    #     pass
+
+    # def ask_to_send_day_recipe(self):
+    #     pass
+    @staticmethod
+    def normalize_text(text):
+        &#34;&#34;&#34;
+        Provides basic normalization by removing trailing spaces from text.
+
+        :param text: str, text to send to user.
+        &#34;&#34;&#34;
+        return &#39;\n&#39;.join([line.strip() for line in text.split(&#39;\n&#39;)])
+    
+    @staticmethod
+    def parse_ingredients(text):
+        &#34;&#34;&#34;
+        Provides basic parsing of the ingredients sent by user.
+
+        :param text: str, text from user with ingredients.
+        &#34;&#34;&#34;
+        # TODO: might be done in different format
+        try:
+            return text[text.index(&#39;\\recipe&#39;) + len(&#39;\\recipe&#39;):].strip().split(punctuation)
+        except ValueError:
+            return []
+
+    # TODO: put this method into drinks/preprocessing later?
+    @staticmethod
+    def load_recipes_of_the_day():
+        &#34;&#34;&#34;
+        Load information about recipes of the day (local 05-CocktailRecipes.csv table).
+        &#34;&#34;&#34;
+        data = pd.read_csv(str(UTILS_PATH.joinpath(&#39;05-CocktailRecipes.csv&#39;)))[
+            [&#39;RecipeName&#39;, &#39;Ingredients&#39;, &#39;Preparation&#39;, &#39;IMAGE&#39;, &#39;ABV&#39;,
+             &#39;VOLUME&#39;, &#39;AUTHOR&#39;, &#39;LOCATION&#39;, &#39;OriginalRecipeSource&#39;]
+        ]
+        with open(str(UTILS_PATH.joinpath(&#39;emoji.pkl&#39;)), &#39;rb&#39;) as fin:
+            emojis = pickle.load(fin)
+
+        recipes = []
+        for row in data.iterrows():
+            # TODO restructure?
+            (
+                name, ingredients, recipe, image, abv,
+                volume, author, location, source
+            ) = row[1]
+
+            orig_name = name.replace(&#39;_&#39;, &#39;&#39;).strip()
+            name_with_emoji = emojis[name.replace(&#39;_&#39;, &#39;&#39;).strip()]
+            ingredients = map(lambda x: x.strip(), ingredients.split(&#39;\n&#39;))
+            recipe = recipe.strip()
+            author = str(author).strip()
+            location = str(location).strip()
+
+            useful_info = (
+                f&#34;was officially invented by the bartender &#34;
+                f&#34;named {author} in {location}&#34;
+                if author != &#39;nan&#39;
+                else f&#34;was officially found in the source: {source}&#34;
+            )
+
+            abv = float(abv)
+            volume = float(volume)
+            recipes.append(Cocktail(orig_name, name_with_emoji, ingredients,
+                                    recipe, image, useful_info, abv, volume))
+
+        return recipes</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="get_drunk_telegram_bot.bot.server.TelegramInterface" href="#get_drunk_telegram_bot.bot.server.TelegramInterface">TelegramInterface</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.load_recipes_of_the_day"><code class="name flex">
+<span>def <span class="ident">load_recipes_of_the_day</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load information about recipes of the day (local 05-CocktailRecipes.csv table).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def load_recipes_of_the_day():
+    &#34;&#34;&#34;
+    Load information about recipes of the day (local 05-CocktailRecipes.csv table).
+    &#34;&#34;&#34;
+    data = pd.read_csv(str(UTILS_PATH.joinpath(&#39;05-CocktailRecipes.csv&#39;)))[
+        [&#39;RecipeName&#39;, &#39;Ingredients&#39;, &#39;Preparation&#39;, &#39;IMAGE&#39;, &#39;ABV&#39;,
+         &#39;VOLUME&#39;, &#39;AUTHOR&#39;, &#39;LOCATION&#39;, &#39;OriginalRecipeSource&#39;]
+    ]
+    with open(str(UTILS_PATH.joinpath(&#39;emoji.pkl&#39;)), &#39;rb&#39;) as fin:
+        emojis = pickle.load(fin)
+
+    recipes = []
+    for row in data.iterrows():
+        # TODO restructure?
+        (
+            name, ingredients, recipe, image, abv,
+            volume, author, location, source
+        ) = row[1]
+
+        orig_name = name.replace(&#39;_&#39;, &#39;&#39;).strip()
+        name_with_emoji = emojis[name.replace(&#39;_&#39;, &#39;&#39;).strip()]
+        ingredients = map(lambda x: x.strip(), ingredients.split(&#39;\n&#39;))
+        recipe = recipe.strip()
+        author = str(author).strip()
+        location = str(location).strip()
+
+        useful_info = (
+            f&#34;was officially invented by the bartender &#34;
+            f&#34;named {author} in {location}&#34;
+            if author != &#39;nan&#39;
+            else f&#34;was officially found in the source: {source}&#34;
+        )
+
+        abv = float(abv)
+        volume = float(volume)
+        recipes.append(Cocktail(orig_name, name_with_emoji, ingredients,
+                                recipe, image, useful_info, abv, volume))
+
+    return recipes</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.normalize_text"><code class="name flex">
+<span>def <span class="ident">normalize_text</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provides basic normalization by removing trailing spaces from text.</p>
+<p>:param text: str, text to send to user.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def normalize_text(text):
+    &#34;&#34;&#34;
+    Provides basic normalization by removing trailing spaces from text.
+
+    :param text: str, text to send to user.
+    &#34;&#34;&#34;
+    return &#39;\n&#39;.join([line.strip() for line in text.split(&#39;\n&#39;)])</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.parse_ingredients"><code class="name flex">
+<span>def <span class="ident">parse_ingredients</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provides basic parsing of the ingredients sent by user.</p>
+<p>:param text: str, text from user with ingredients.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def parse_ingredients(text):
+    &#34;&#34;&#34;
+    Provides basic parsing of the ingredients sent by user.
+
+    :param text: str, text from user with ingredients.
+    &#34;&#34;&#34;
+    # TODO: might be done in different format
+    try:
+        return text[text.index(&#39;\\recipe&#39;) + len(&#39;\\recipe&#39;):].strip().split(punctuation)
+    except ValueError:
+        return []</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.process_message"><code class="name flex">
+<span>def <span class="ident">process_message</span></span>(<span>self, chat_id, msg)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Process message from user and send the response back.</p>
+<p>:param chat_id: str, from which the message was received and where to send the response.
+:param msg: str, message that was sent by user.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_message(self, chat_id, msg):
+    &#34;&#34;&#34;
+    Process message from user and send the response back.
+
+    :param chat_id: str, from which the message was received and where to send the response.
+    :param msg: str, message that was sent by user.
+    &#34;&#34;&#34;
+    if self.debug:
+        print(&#34;Got a message: &lt;%s&gt;.&#34; % msg)
+
+    if msg == &#39;\\start&#39;.strip():
+        self._start_session_and_say_hello(chat_id)
+
+    elif msg == &#39;\\end&#39;:
+        self._end_session_and_say_bye(chat_id)
+
+    elif msg == &#39;\\recipe of the day&#39;:
+        self._send_day_cocktail(chat_id)
+
+    elif &#39;\\recipe&#39; in msg:
+        ingredients = self.parse_ingredients(msg)
+        self._send_best_cocktail_with_ingredients(chat_id, ingredients)
+
+    elif msg == &#39;\\photo&#39;:
+        self._send_cocktail_image(chat_id, self.db.get_cocktail(chat_id))
+
+    elif msg == &#39;\\intoxication level&#39;:
+        self._send_intoxication_degree(chat_id)
+
+    elif msg == &#39;\\info&#39;:
+        self._send_cocktail_useful_info(chat_id,
+                                        self.db.get_cocktail(chat_id))
+
+    elif msg == &#39;\\menu&#39;:
+        self._send_cocktails_menu(chat_id)
+
+    elif &#39;\\explore&#39; in msg:
+        ingredients = self.parse_ingredients(msg)
+        self._send_exploration_result(chat_id, ingredients)
+    else:
+        self._send_help_message(chat_id)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.ServerDataBase"><code class="flex name class">
+<span>class <span class="ident">ServerDataBase</span></span>
+<span>(</span><span>save_path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ServerDataBase saves an information about user history of drinks or amount of total alcohol absorbed.</p>
+<p>:param save_path: str, path to the local database.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ServerDataBase:
+    &#34;&#34;&#34;
+    ServerDataBase saves an information about user history of drinks or amount of total alcohol absorbed.
+
+    :param save_path: str, path to the local database.
+    &#34;&#34;&#34;
+    def __init__(self, save_path):
+        self.json_path = save_path
+        if os.path.exists(save_path):
+            with open(save_path, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+                self.db = json.load(f, object_hook=decode_json)
+        else:
+            self.db = {}
+
+    def _initialize_record_if_needed(self, chat_id):
+        &#34;&#34;&#34;
+        Initializes total_alcohol_absorbed and cocktails history in the beginning of the session.
+
+        :param chat_id: str, from which the message was received and where to send the response.
+        &#34;&#34;&#34;
+        if chat_id not in self.db:
+            self.db[chat_id] = {
+                &#39;total_alcohol_absorbed&#39;: 0,
+                &#39;cocktails_history&#39;: [],
+                &#39;cocktail&#39;: None
+            }
+
+    def update(self, chat_id, cocktail):
+        &#34;&#34;&#34;
+        Updates cocktails history and total_alcohol_absorbed after communication with the user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :param cocktail: Cocktail instance.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+
+        self.db[chat_id][&#39;cocktails_history&#39;].append(cocktail)
+        self.db[chat_id][&#39;cocktail&#39;] = cocktail
+        self.db[chat_id][&#39;total_alcohol_absorbed&#39;] += \
+            cocktail.abv * cocktail.volume
+
+        self._dump()
+
+    def get_cocktail(self, chat_id):
+        &#34;&#34;&#34;
+        Returns the most recent cocktail taken by user according to communication history.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: Cocktail instance, the most recent cocktail taken by user.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id][&#39;cocktail&#39;]
+
+    def get_cocktails_history(self, chat_id):
+        &#34;&#34;&#34;
+        Return full cocktails history for the specific user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: list, full user cocktails history.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id][&#39;cocktails_history&#39;]
+
+    def get_total_alcohol_absorbed(self, chat_id):
+        &#34;&#34;&#34;
+        Return total amount of alcohol absorbed by user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: int, total amount of alcohol absorbed by user.
+        &#34;&#34;&#34;
+        self._initialize_record_if_needed(chat_id)
+        return self.db[chat_id][&#39;total_alcohol_absorbed&#39;]
+
+    def end_current_session(self, chat_id):
+        &#34;&#34;&#34;
+        Ends the session with user. Update total_alcohol_absorbed to 0 and clean cocktails_history.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+        &#34;&#34;&#34;
+        if chat_id in self.db:
+            self.db[chat_id] = {
+                &#34;total_alcohol_absorbed&#34;: 0,
+                &#34;cocktails_history&#34;: [],
+                &#34;cocktail&#34;: None,
+            }
+            self._dump()
+
+    def _dump(self):
+        with open(self.json_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+            json.dump(self.db, f, default=encode_json, indent=4)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.bot.server.ServerDataBase.end_current_session"><code class="name flex">
+<span>def <span class="ident">end_current_session</span></span>(<span>self, chat_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Ends the session with user. Update total_alcohol_absorbed to 0 and clean cocktails_history.</p>
+<p>:param chat_id: str, from which the message was received and where to send the response;</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def end_current_session(self, chat_id):
+    &#34;&#34;&#34;
+    Ends the session with user. Update total_alcohol_absorbed to 0 and clean cocktails_history.
+
+    :param chat_id: str, from which the message was received and where to send the response;
+    &#34;&#34;&#34;
+    if chat_id in self.db:
+        self.db[chat_id] = {
+            &#34;total_alcohol_absorbed&#34;: 0,
+            &#34;cocktails_history&#34;: [],
+            &#34;cocktail&#34;: None,
+        }
+        self._dump()</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.ServerDataBase.get_cocktail"><code class="name flex">
+<span>def <span class="ident">get_cocktail</span></span>(<span>self, chat_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the most recent cocktail taken by user according to communication history.</p>
+<p>:param chat_id: str, from which the message was received and where to send the response;</p>
+<p>:return: Cocktail instance, the most recent cocktail taken by user.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cocktail(self, chat_id):
+    &#34;&#34;&#34;
+    Returns the most recent cocktail taken by user according to communication history.
+
+    :param chat_id: str, from which the message was received and where to send the response;
+
+    :return: Cocktail instance, the most recent cocktail taken by user.
+    &#34;&#34;&#34;
+    self._initialize_record_if_needed(chat_id)
+    return self.db[chat_id][&#39;cocktail&#39;]</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.ServerDataBase.get_cocktails_history"><code class="name flex">
+<span>def <span class="ident">get_cocktails_history</span></span>(<span>self, chat_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return full cocktails history for the specific user.</p>
+<p>:param chat_id: str, from which the message was received and where to send the response;</p>
+<p>:return: list, full user cocktails history.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cocktails_history(self, chat_id):
+    &#34;&#34;&#34;
+    Return full cocktails history for the specific user.
+
+    :param chat_id: str, from which the message was received and where to send the response;
+
+    :return: list, full user cocktails history.
+    &#34;&#34;&#34;
+    self._initialize_record_if_needed(chat_id)
+    return self.db[chat_id][&#39;cocktails_history&#39;]</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.ServerDataBase.get_total_alcohol_absorbed"><code class="name flex">
+<span>def <span class="ident">get_total_alcohol_absorbed</span></span>(<span>self, chat_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return total amount of alcohol absorbed by user.</p>
+<p>:param chat_id: str, from which the message was received and where to send the response;</p>
+<p>:return: int, total amount of alcohol absorbed by user.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_total_alcohol_absorbed(self, chat_id):
+    &#34;&#34;&#34;
+    Return total amount of alcohol absorbed by user.
+
+    :param chat_id: str, from which the message was received and where to send the response;
+
+    :return: int, total amount of alcohol absorbed by user.
+    &#34;&#34;&#34;
+    self._initialize_record_if_needed(chat_id)
+    return self.db[chat_id][&#39;total_alcohol_absorbed&#39;]</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.ServerDataBase.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self, chat_id, cocktail)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Updates cocktails history and total_alcohol_absorbed after communication with the user.</p>
+<p>:param chat_id: str, from which the message was received and where to send the response;</p>
+<p>:param cocktail: Cocktail instance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self, chat_id, cocktail):
+    &#34;&#34;&#34;
+    Updates cocktails history and total_alcohol_absorbed after communication with the user.
+
+    :param chat_id: str, from which the message was received and where to send the response;
+
+    :param cocktail: Cocktail instance.
+    &#34;&#34;&#34;
+    self._initialize_record_if_needed(chat_id)
+
+    self.db[chat_id][&#39;cocktails_history&#39;].append(cocktail)
+    self.db[chat_id][&#39;cocktail&#39;] = cocktail
+    self.db[chat_id][&#39;total_alcohol_absorbed&#39;] += \
+        cocktail.abv * cocktail.volume
+
+    self._dump()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="get_drunk_telegram_bot.bot.server.TelegramInterface"><code class="flex name class">
+<span>class <span class="ident">TelegramInterface</span></span>
+<span>(</span><span>token, hook_url, debug=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>TelegramInterface class provides the basic functionality for GetDrunkBotHandler.</p>
+<p>:param token: str, telegram bot token</p>
+<p>:param hook_url, telegram bot hook_url (provided by ngrok, see README.md)</p>
+<p>:param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TelegramInterface:
+    &#34;&#34;&#34;
+    TelegramInterface class provides the basic functionality for GetDrunkBotHandler.
+
+    :param token: str, telegram bot token
+
+    :param hook_url, telegram bot hook_url (provided by ngrok, see README.md)
+    
+    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    &#34;&#34;&#34;
+    def __init__(self, token, hook_url, debug=False):
+        if debug:
+            print(&#39;Starting tg interface...&#39;)
+        self._bot_url = f&#34;https://api.telegram.org/bot{token}&#34;
+        self._set_web_hook(hook_url)
+        self._chat_id = None
+        if debug:
+            print(&#39;tg interface started successfully.&#39;)
+
+    def _set_web_hook(self, hook_url):
+        method = &#34;setWebhook&#34;
+        url = f&#34;{self._bot_url}/{method}&#34;
+        data = {&#34;url&#34;: hook_url}
+        requests.post(url, data=data)
+
+    def _send_photo(self, chat_id, text, photo_path):
+        method = &#34;sendPhoto&#34;
+        url = f&#34;{self._bot_url}/{method}&#34;
+        data = {&#34;chat_id&#34;: chat_id, &#39;caption&#39;: text}
+        with open(photo_path, &#34;rb&#34;) as image_file:
+            requests.post(url, data=data, files={&#34;photo&#34;: image_file})
+
+    def _send_message(self, chat_id, text):
+        method = &#34;sendMessage&#34;
+        url = f&#34;{self._bot_url}/{method}&#34;
+        data = {&#34;chat_id&#34;: chat_id, &#34;text&#34;: text}
+        requests.post(url, data=data)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler" href="#get_drunk_telegram_bot.bot.server.GetDrunkBotHandler">GetDrunkBotHandler</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="get_drunk_telegram_bot.bot" href="index.html">get_drunk_telegram_bot.bot</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="get_drunk_telegram_bot.bot.server.create_server" href="#get_drunk_telegram_bot.bot.server.create_server">create_server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler" href="#get_drunk_telegram_bot.bot.server.GetDrunkBotHandler">GetDrunkBotHandler</a></code></h4>
+<ul class="">
+<li><code><a title="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.load_recipes_of_the_day" href="#get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.load_recipes_of_the_day">load_recipes_of_the_day</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.normalize_text" href="#get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.normalize_text">normalize_text</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.parse_ingredients" href="#get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.parse_ingredients">parse_ingredients</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.process_message" href="#get_drunk_telegram_bot.bot.server.GetDrunkBotHandler.process_message">process_message</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="get_drunk_telegram_bot.bot.server.ServerDataBase" href="#get_drunk_telegram_bot.bot.server.ServerDataBase">ServerDataBase</a></code></h4>
+<ul class="">
+<li><code><a title="get_drunk_telegram_bot.bot.server.ServerDataBase.end_current_session" href="#get_drunk_telegram_bot.bot.server.ServerDataBase.end_current_session">end_current_session</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.ServerDataBase.get_cocktail" href="#get_drunk_telegram_bot.bot.server.ServerDataBase.get_cocktail">get_cocktail</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.ServerDataBase.get_cocktails_history" href="#get_drunk_telegram_bot.bot.server.ServerDataBase.get_cocktails_history">get_cocktails_history</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.ServerDataBase.get_total_alcohol_absorbed" href="#get_drunk_telegram_bot.bot.server.ServerDataBase.get_total_alcohol_absorbed">get_total_alcohol_absorbed</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.bot.server.ServerDataBase.update" href="#get_drunk_telegram_bot.bot.server.ServerDataBase.update">update</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="get_drunk_telegram_bot.bot.server.TelegramInterface" href="#get_drunk_telegram_bot.bot.server.TelegramInterface">TelegramInterface</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

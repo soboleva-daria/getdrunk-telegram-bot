@@ -25,9 +25,9 @@ getdrunk bot supports the next scenarios of communication:
 
 **How to start using**
 
-If you want to try using our bot you can write a message to @get_drunk_bot in Telegram.
+If you want to try using our bot, you can write a message to @get_drunk_bot in [Telegram](https://t.me/get_drunk_bot).
 
-If you want to run your own bot follow the instructions below. 
+If you want to run your own bot, please follow the instructions below. 
     
 **How to install and run**
 
@@ -37,19 +37,19 @@ After clonning, you may use two different ways to run the bot:
 ```python
 pip install <path-to-root>
 ```
-(2) Preparing to run your own bot
-- Write a message to @BotFather in Telegram. It will give you your own ```<token>``` if you want to run your own GetDrunkBot
-- Bind your port with external url. For example you may run ngrok. After installing ngrok you should run:
-```
+(2) Run your own bot
+- First, text a message to @BotFather in [Telegram](https://t.me/botfather). You will need your own ```<token>``` for GetDrunkBot;
+- Then, bind your port with an external url. For example you may run ```ngrok```:
+```bash
 ./ngrok http <port>
 ```
 ```<your server url>``` is the one returned by this command. Note: it should start with ```https:```.
 
 (3) Run the command (Please verify you have Python >=3.6.0) 
 ```python
-   python -m get_drunk_telegram_bot --token <token> --port <port> ----web-hook-url <your server url>
+python -m get_drunk_telegram_bot --token <token> --port <port> --web-hook-url <your server url>
 ```
-Your bot is ready. You may write it a message!
+Your bot is ready. You may start messaging!
 
 **How to test**
 
@@ -57,6 +57,15 @@ From the root folder run the following script:
 ```bash
 sh run_tests.sh
 ```
+
+**Documentation**
+
+To build documentation, run this command:
+```bash
+cd <path-to-root>
+python -m pdoc --html get_drunk_telegram_bot --html-dir docs
+```
+You can find docs in <path-to-root>/docs/get_drunk_telegram_bot/index.html file.
 
 <img src="get_drunk_telegram_bot/images/readme-img.png" width="400" height="350" />
 
