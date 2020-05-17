@@ -1,1 +1,1 @@
-pytest --pep8 ./
+pytest --pep8 --disable-warnings ./
