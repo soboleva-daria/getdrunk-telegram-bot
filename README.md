@@ -51,6 +51,13 @@ pip install <path-to-root>
 ```
 Your bot is ready. You may write it a message!
 
+**How to test**
+
+From the root folder run the following script:
+```bash
+sh run_tests.sh
+```
+
 <img src="get_drunk_telegram_bot/images/readme-img.png" width="400" height="350" />
 
 
