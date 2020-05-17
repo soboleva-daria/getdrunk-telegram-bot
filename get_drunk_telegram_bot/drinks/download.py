@@ -4,7 +4,8 @@ from copy import copy, deepcopy
 class SimpleDownloader:
     """
     Base class for downloading training data.
-    Below you can find specific downloaders for any specific part needed for training.
+    Below you can find specific downloaders for any
+    specific part needed for training.
     """
     def __init__(self):
         pass

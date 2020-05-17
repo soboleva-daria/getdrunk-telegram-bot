@@ -34,8 +34,7 @@ def encode_json(obj):
         return list(obj)
     else:
         return json.JSONEncoder().default(obj)
-
-
+      
 def normalize_text(text):
     """
     Provides basic normalization by removing trailing spaces from text.

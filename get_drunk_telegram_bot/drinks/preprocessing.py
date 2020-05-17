@@ -1,12 +1,13 @@
 from copy import copy, deepcopy
-from .download import CocktailRecipesDownloader, CocktailImagesDownloader, CocktailUsefulInfoDownloader
+from .download import (CocktailRecipesDownloader, CocktailImagesDownloader,
+                       CocktailUsefulInfoDownloader)
 
 
 class RawDataset:
     """
     Dataset manages training sets.
     It serves correct formats and can perform additional parsings.
-    TODO: add more attributes, split useful info into final list of attributes needed.
+    TODO: add more attributes, split useful info into final list of attributes needed.  # noqa
     TODO: make an interface via setter, getter, modify to allow adding new recipes.
     TODO: maybe split in 2 classes: RawDataset, Dataset.
     """
@@ -44,7 +45,7 @@ class RawDataset:
         self.images = CocktailImagesDownloader().get_images()
         self.useful_info = CocktailUsefulInfoDownloader().get_useful_info()
 
-        # TODO: should be converted to pandas format or any other useful format for training
+        # TODO: should be converted to pandas format or any other useful format for training  # noqa
         return [self.recipes, self.images, self.useful_info]
 
     def dump_train_set(self):
