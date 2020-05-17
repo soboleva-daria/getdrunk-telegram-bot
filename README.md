@@ -47,7 +47,7 @@ pip install <path-to-root>
 
 (3) Run the command (Please verify you have Python >=3.6.0) 
 ```python
-   python -m get_drunk_telegram_bot --token <token> --port <port> --web-hook-url <your server url>
+python -m get_drunk_telegram_bot --token <token> --port <port> --web-hook-url <your server url>
 ```
 Your bot is ready. You may start messaging!
 
@@ -62,8 +62,8 @@ sh run_tests.sh
 
 To build documentation, run this command:
 ```bash
-   cd <path-to-root>
-   python -m pdoc --html get_drunk_telegram_bot --html-dir docs
+cd <path-to-root>
+python -m pdoc --html get_drunk_telegram_bot --html-dir docs
 ```
 You can find docs in <path-to-root>/docs/get_drunk_telegram_bot/index.html file.
 
