@@ -27,13 +27,15 @@ def get_file(filename):
 
 class TelegramInterface:
     """
-    TelegramInterface class provides the basic functionality for GetDrunkBotHandler.
+    TelegramInterface class provides the basic functionality for
+    GetDrunkBotHandler.
 
     :param token: str, telegram bot token
 
     :param hook_url, telegram bot hook_url (provided by ngrok, see README.md)
-    
-    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+
+    :param debug: bool, specifies the verbosity level (if True, logs will be
+    provided in sys.stdout).
     """
     def __init__(self, token, hook_url, debug=False):
         if debug:
@@ -66,7 +68,8 @@ class TelegramInterface:
 
 class ServerDataBase:
     """
-    ServerDataBase saves an information about user history of drinks or amount of total alcohol absorbed.
+    ServerDataBase saves an information about user history of drinks or amount
+    of total alcohol absorbed.
 
     :param save_path: str, path to the local database.
     """
@@ -80,9 +83,11 @@ class ServerDataBase:
 
     def _initialize_record_if_needed(self, chat_id):
         """
-        Initializes total_alcohol_absorbed and cocktails history in the beginning of the session.
+        Initializes total_alcohol_absorbed and cocktails history in the
+        beginning of the session.
 
-        :param chat_id: str, from which the message was received and where to send the response.
+        :param chat_id: str, from which the message was received and where to
+        send the response.
         """
         if chat_id not in self.db:
             self.db[chat_id] = {
@@ -93,9 +98,11 @@ class ServerDataBase:
 
     def update(self, chat_id, cocktail):
         """
-        Updates cocktails history and total_alcohol_absorbed after communication with the user.
+        Updates cocktails history and total_alcohol_absorbed after
+        communication with the user.
 
-        :param chat_id: str, from which the message was received and where to send the response;
+        :param chat_id: str, from which the message was received and where to
+        send the response;
 
         :param cocktail: Cocktail instance.
         """
@@ -110,9 +117,11 @@ class ServerDataBase:
 
     def get_cocktail(self, chat_id):
         """
-        Returns the most recent cocktail taken by user according to communication history.
+        Returns the most recent cocktail taken by user according to
+        communication history.
 
-        :param chat_id: str, from which the message was received and where to send the response;
+        :param chat_id: str, from which the message was received and where
+        to send the response;
 
         :return: Cocktail instance, the most recent cocktail taken by user.
         """
@@ -123,7 +132,8 @@ class ServerDataBase:
         """
         Return full cocktails history for the specific user.
 
-        :param chat_id: str, from which the message was received and where to send the response;
+        :param chat_id: str, from which the message was received and where to
+        send the response;
 
         :return: list, full user cocktails history.
         """
@@ -134,7 +144,8 @@ class ServerDataBase:
         """
         Return total amount of alcohol absorbed by user.
 
-        :param chat_id: str, from which the message was received and where to send the response;
+        :param chat_id: str, from which the message was received and where to
+        send the response;
 
         :return: int, total amount of alcohol absorbed by user.
         """
@@ -143,9 +154,11 @@ class ServerDataBase:
 
     def end_current_session(self, chat_id):
         """
-        Ends the session with user. Update total_alcohol_absorbed to 0 and clean cocktails_history.
+        Ends the session with user. Update total_alcohol_absorbed to 0 and
+        clean cocktails_history.
 
-        :param chat_id: str, from which the message was received and where to send the response;
+        :param chat_id: str, from which the message was received and where to
+        send the response;
         """
         if chat_id in self.db:
             self.db[chat_id] = {
@@ -162,10 +175,11 @@ class ServerDataBase:
 
 class GetDrunkBotHandler(TelegramInterface):
     """
-    class GetDrunkBotHandler is responsible for all kind of user-server communication from processing messages
-    to sending commands in return.
+    class GetDrunkBotHandler is responsible for all kind of user-server
+    communication from processing messages to sending commands in return.
 
-    :param model_name: str, should be one of the {TFIdfCocktailModel, BertCocktailModel, BaseModel} (default=BaseModel);
+    :param model_name: str, should be one of the {TFIdfCocktailModel,
+        BertCocktailModel, BaseModel} (default=BaseModel);
 
     :param train: str, path to the train table (default=None);
 
@@ -173,12 +187,13 @@ class GetDrunkBotHandler(TelegramInterface):
 
     :param model_vocab_file: str, path to model vocab file (default=None);
 
-    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    :param debug: bool, specifies the verbosity level (if True, logs will be
+        provided in sys.stdout).
     """
     # TODO: add exploratory user request
     # TODO: Better formatting for special names? cocktail name etc.
-    # TODO: more information for user about what cocktail is currently processing.
-    # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?
+    # TODO: more information for user about what cocktail is currently processing.  # noqa
+    # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?  # noqa
     def __init__(
             self,
             model_name='BaseModel',
@@ -215,7 +230,8 @@ class GetDrunkBotHandler(TelegramInterface):
         elif self.model_name == 'TFIdfCocktailModel':
             self.model = TFIdfCocktailModel(self.train).train_on_recipes()
         elif self.model_name == 'BertCocktailModel':
-            self.model = BertCocktailModel(self.model_config_file, self.model_vocab_file)
+            self.model = BertCocktailModel(self.model_config_file,
+                                           self.model_vocab_file)
         else:
             raise ValueError(
                 f"Error in model_name. Available models: "
@@ -226,7 +242,8 @@ class GetDrunkBotHandler(TelegramInterface):
         """
         Process message from user and send the response back.
 
-        :param chat_id: str, from which the message was received and where to send the response.
+        :param chat_id: str, from which the message was received and where to
+            send the response.
         :param msg: str, message that was sent by user.
         """
         if self.debug:
@@ -268,15 +285,15 @@ class GetDrunkBotHandler(TelegramInterface):
         self.db.end_current_session(chat_id)
         msg = normalize_text("""
             Hey there, wanna get drunk? 💫
-            
+
             Here is what I can do for you:
-            
+
             — find cocktail recipe with your ingredients 🥂
-            
+
             — tell your current intoxication level 🐙
-            
+
             — provide recipe of the day 💜
-            
+
             — explore cocktails for you  💻
         """)
 
@@ -298,11 +315,11 @@ class GetDrunkBotHandler(TelegramInterface):
 
         msg = normalize_text(f"""
             { cocktail.name }
-            
+
             Ingredients: { ', '.join(cocktail.ingredients).strip() }
-            
-            Method: { cocktail.recipe }  
-            
+
+            Method: { cocktail.recipe }
+
             Enjoy! 💫
         """)
 
@@ -331,8 +348,8 @@ class GetDrunkBotHandler(TelegramInterface):
         degree = self._get_intoxication_degree(chat_id)
         msg = normalize_text(f"""
             You are in {degree}.
-            
-            Here is the list of what you took: 
+
+            Here is the list of what you took:
             {cocktail_list}
         """)
         self._send_message(chat_id, msg)
@@ -376,13 +393,13 @@ class GetDrunkBotHandler(TelegramInterface):
         cocktail = self.recipes_of_the_day[self.index]
         msg = normalize_text(f"""
             Our {weekday_name} menu 👩‍🍳🥳:
-            
+
             {cocktail.name}
-            
+
             Ingredients: {', '.join(cocktail.ingredients).strip()}
-            
-            Method: {cocktail.recipe}  
-                    
+
+            Method: {cocktail.recipe}
+
             Enjoy! 💫
         """)
 
@@ -394,7 +411,7 @@ class GetDrunkBotHandler(TelegramInterface):
             cocktail.name for cocktail in self.recipes_of_the_day])
         msg = normalize_text(f"""
             Menu 🍽️ 😋:
-            
+
             {cocktail_list.strip()}
         """)
         self._send_message(chat_id, msg)
@@ -402,12 +419,12 @@ class GetDrunkBotHandler(TelegramInterface):
     def _send_help_message(self, chat_id):
         msg = normalize_text("""
             I am sorry :( I did not get what you mean.
-            
-            Please try again with these commands: 
+
+            Please try again with these commands:
             `\\start`, `\\end`, `\\recipe`, `\\photo`,
             `\\intoxication level`, `\\recipe of the day`,
             `\\explore`, `\\info`, `\\menu`
-            
+
             Thank you! 🙏
         """)
 
@@ -434,7 +451,7 @@ class GetDrunkBotHandler(TelegramInterface):
 
     # def ask_to_send_day_recipe(self):
     #     pass
-    
+
     @staticmethod
     def parse_ingredients(text):
         """
@@ -444,7 +461,8 @@ class GetDrunkBotHandler(TelegramInterface):
         """
         # TODO: might be done in different format
         try:
-            return text[text.index('\\recipe') + len('\\recipe'):].strip().split(punctuation)
+            start_position = text.index('\\recipe') + len('\\recipe')
+            return text[start_position:].strip().split(punctuation)
         except ValueError:
             return []
 
@@ -452,7 +470,8 @@ class GetDrunkBotHandler(TelegramInterface):
     @staticmethod
     def load_recipes_of_the_day():
         """
-        Load information about recipes of the day (local 05-CocktailRecipes.csv table).
+        Load information about recipes of the day
+        (local 05-CocktailRecipes.csv table).
         """
         data = pd.read_csv(get_file('05-CocktailRecipes.csv'))[
             ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'ABV',

@@ -1,17 +1,6 @@
 import json
 from collections import Counter
 
-"""
-units = []
-
-with open('cocktails.json') as json_file:
-    data = json.load(json_file)
-    for cocktail in data:
-        for ingredient in cocktail['ingredients']:
-            units.append(ingredient['unit'])
-
-print(Counter(units))
-"""
 
 oz = 29.5735
 default_liqueur_degree = 0.18
@@ -23,7 +12,7 @@ alcoholic_drinks = alcohol_degree.keys()
 error_ids = []
 
 with open('cocktails.json') as json_file:
-    
+
     data = json.load(json_file)
     for cocktail in data:
 
@@ -44,9 +33,13 @@ with open('cocktails.json') as json_file:
                     alcohol += float(component['amount']) * alcohol_degree[w]
                     break
                 elif w == 'liqueur':
-                    alcohol += float(component['amount']) * default_liqueur_degree
+                    alcohol += (
+                        float(component['amount']) *
+                        default_liqueur_degree
+                    )
 
-        if len(error_ids) > 0 and error_ids[-1] != cocktail['id']:
+        if (len(error_ids) == 0) or (len(error_ids) > 0 and
+                                     error_ids[-1] != cocktail['id']):
             cocktail['ABV'] = round(alcohol / volume, 3)
             cocktail['VOLUME'] = round(volume * oz)
 
