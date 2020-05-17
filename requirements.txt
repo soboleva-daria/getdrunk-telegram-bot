@@ -2,3 +2,4 @@ flask
 requests
 numpy
 pandas
+pytest-pep8
