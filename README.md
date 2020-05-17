@@ -40,7 +40,7 @@ pip install <path-to-root>
 (2) Run your own bot
 - First, text a message to @BotFather in [Telegram](https://t.me/botfather). You will need your own ```<token>``` for GetDrunkBot;
 - Then, bind your port with an external url. For example you may run ```ngrok```:
-```
+```bash
 ./ngrok http <port>
 ```
 ```<your server url>``` is the one returned by this command. Note: it should start with ```https:```.
@@ -57,6 +57,15 @@ From the root folder run the following script:
 ```bash
 sh run_tests.sh
 ```
+
+**Documentation**
+
+To build documentation, run this command:
+```bash
+   cd <path-to-root>
+   python -m pdoc --html get_drunk_telegram_bot --html-dir docs
+```
+You can find docs in <path-to-root>/docs/get_drunk_telegram_bot/index.html file.
 
 <img src="get_drunk_telegram_bot/images/readme-img.png" width="400" height="350" />
 
