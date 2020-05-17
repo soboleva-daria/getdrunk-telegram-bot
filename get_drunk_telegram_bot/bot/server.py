@@ -9,18 +9,27 @@ import pandas as pd
 from flask import request, Flask
 from string import punctuation
 from datetime import datetime
-from copy import deepcopy
 
 from get_drunk_telegram_bot.model.predict import (
     BaseModel, TFIdfCocktailModel, BertCocktailModel)
 
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
 
+from get_drunk_telegram_bot.utils.utils import encode_json, decode_json
 
 UTILS_PATH = pathlib.Path('get_drunk_telegram_bot/utils')
 
 
 class TelegramInterface:
+    """
+    TelegramInterface class provides the basic functionality for GetDrunkBotHandler.
+
+    :param token: str, telegram bot token
+
+    :param hook_url, telegram bot hook_url (provided by ngrok, see README.md)
+    
+    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    """
     def __init__(self, token, hook_url, debug=False):
         if debug:
             print('Starting tg interface...')
@@ -50,39 +59,12 @@ class TelegramInterface:
         requests.post(url, data=data)
 
 
-def decode_json(dct):
-    if "__cocktail__" in dct:
-        dct.pop("__cocktail__", None)
-        return Cocktail(**dct)
-    elif isinstance(dct, dict):
-        result = {}
-        for key, value in dct.items():
-            if key.isdigit():
-                result[int(key)] = value
-            else:
-                result[key] = value
-        return result
-
-    return dct
-
-
-def encode_json(obj):
-    if isinstance(obj, Cocktail):
-        dct = deepcopy(obj.__dict__)
-
-        dct['__cocktail__'] = True
-        for key, value in obj.__dict__.items():
-            if key.startswith('_'):
-                dct.pop(key, None)
-                dct[key.replace('_', '', 1)] = deepcopy(value)
-        return dct
-    elif isinstance(obj, map):
-        return list(obj)
-    else:
-        return json.JSONEncoder().default(obj)
-
-
 class ServerDataBase:
+    """
+    ServerDataBase saves an information about user history of drinks or amount of total alcohol absorbed.
+
+    :param save_path: str, path to the local database.
+    """
     def __init__(self, save_path):
         self.json_path = save_path
         if os.path.exists(save_path):
@@ -92,6 +74,11 @@ class ServerDataBase:
             self.db = {}
 
     def _initialize_record_if_needed(self, chat_id):
+        """
+        Initializes total_alcohol_absorbed and cocktails history in the beginning of the session.
+
+        :param chat_id: str, from which the message was received and where to send the response.
+        """
         if chat_id not in self.db:
             self.db[chat_id] = {
                 'total_alcohol_absorbed': 0,
@@ -100,6 +87,13 @@ class ServerDataBase:
             }
 
     def update(self, chat_id, cocktail):
+        """
+        Updates cocktails history and total_alcohol_absorbed after communication with the user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :param cocktail: Cocktail instance.
+        """
         self._initialize_record_if_needed(chat_id)
 
         self.db[chat_id]['cocktails_history'].append(cocktail)
@@ -110,18 +104,44 @@ class ServerDataBase:
         self._dump()
 
     def get_cocktail(self, chat_id):
+        """
+        Returns the most recent cocktail taken by user according to communication history.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: Cocktail instance, the most recent cocktail taken by user.
+        """
         self._initialize_record_if_needed(chat_id)
         return self.db[chat_id]['cocktail']
 
     def get_cocktails_history(self, chat_id):
+        """
+        Return full cocktails history for the specific user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: list, full user cocktails history.
+        """
         self._initialize_record_if_needed(chat_id)
         return self.db[chat_id]['cocktails_history']
 
     def get_total_alcohol_absorbed(self, chat_id):
+        """
+        Return total amount of alcohol absorbed by user.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+
+        :return: int, total amount of alcohol absorbed by user.
+        """
         self._initialize_record_if_needed(chat_id)
         return self.db[chat_id]['total_alcohol_absorbed']
 
     def end_current_session(self, chat_id):
+        """
+        Ends the session with user. Update total_alcohol_absorbed to 0 and clean cocktails_history.
+
+        :param chat_id: str, from which the message was received and where to send the response;
+        """
         if chat_id in self.db:
             self.db[chat_id] = {
                 "total_alcohol_absorbed": 0,
@@ -136,6 +156,20 @@ class ServerDataBase:
 
 
 class GetDrunkBotHandler(TelegramInterface):
+    """
+    class GetDrunkBotHandler is responsible for all kind of user-server communication from processing messages
+    to sending commands in return.
+
+    :param model_name: str, should be one of the {TFIdfCocktailModel, BertCocktailModel, BaseModel} (default=BaseModel);
+
+    :param train: str, path to the train table (default=None);
+
+    :param model_config_file: str, path to model config (default=None);
+
+    :param model_vocab_file: str, path to model vocab file (default=None);
+
+    :param debug: bool, specifies the verbosity level (if True, logs will be provided in sys.stdout).
+    """
     # TODO: add exploratory user request
     # TODO: Better formatting for special names? cocktail name etc.
     # TODO: more information for user about what cocktail is currently processing.
@@ -184,6 +218,12 @@ class GetDrunkBotHandler(TelegramInterface):
                 f"Got: {self.model_name}")
 
     def process_message(self, chat_id, msg):
+        """
+        Process message from user and send the response back.
+
+        :param chat_id: str, from which the message was received and where to send the response.
+        :param msg: str, message that was sent by user.
+        """
         if self.debug:
             print("Got a message: <%s>." % msg)
 
@@ -391,19 +431,32 @@ class GetDrunkBotHandler(TelegramInterface):
     #     pass
     @staticmethod
     def normalize_text(text):
+        """
+        Provides basic normalization by removing trailing spaces from text.
+
+        :param text: str, text to send to user.
+        """
         return '\n'.join([line.strip() for line in text.split('\n')])
     
     @staticmethod
-    def parse_ingredients(msg):
+    def parse_ingredients(text):
+        """
+        Provides basic parsing of the ingredients sent by user.
+
+        :param text: str, text from user with ingredients.
+        """
         # TODO: might be done in different format
         try:
-            return msg[msg.index('\\recipe') + len('\\recipe'):].strip().split(punctuation)
+            return text[text.index('\\recipe') + len('\\recipe'):].strip().split(punctuation)
         except ValueError:
             return []
 
     # TODO: put this method into drinks/preprocessing later?
     @staticmethod
     def load_recipes_of_the_day():
+        """
+        Load information about recipes of the day (local 05-CocktailRecipes.csv table).
+        """
         data = pd.read_csv(str(UTILS_PATH.joinpath('05-CocktailRecipes.csv')))[
             ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'ABV',
              'VOLUME', 'AUTHOR', 'LOCATION', 'OriginalRecipeSource']
@@ -442,6 +495,11 @@ class GetDrunkBotHandler(TelegramInterface):
 
 
 def create_server(args):
+    """
+    Starts get-drunk-telegram bot.
+
+    :param args: --port, --token, --web-hook-url and --debug params specified.
+    """
     app = Flask(__name__)
     if args.debug:
         print('Init Bot')

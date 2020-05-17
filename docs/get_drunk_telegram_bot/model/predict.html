@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>get_drunk_telegram_bot.model.predict API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>get_drunk_telegram_bot.model.predict</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from get_drunk_telegram_bot.drinks.cocktail import Cocktail
+from get_drunk_telegram_bot.drinks.preprocessing import RawDataset
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+import sklearn as sk
+from typing import List
+
+
+class BaseModel:
+    # BaseModel answers are hardcoded for demo only.
+    ORIG_NAME = &#39;Pina Colada&#39;
+    NAME = &#39;Pina Colada 🍍 🥃&#39;
+    INGREDIENTS = [&#39;3 cl rum&#39;, &#39;3 cl coconut cream&#39;, &#39;9 cl pineapple juice&#39;]
+    RECIPE = &#39;Mixed with crushed ice in blender until smooth, then pour into a chilled glass, garnish and serve.  &#39;
+    IMG = None
+    USEFUL_INFO = &#39;was officially invented on August 15 1954 by a bartender named Ramón “Monchito” Marrero&#39;
+    ABV = 0.1  # alcohol by volume in %
+    VOLUME = 70  # in grams
+
+    @staticmethod
+    def predict(query):
+        cocktail = Cocktail(
+            orig_name=BaseModel.ORIG_NAME,
+            name=BaseModel.NAME,
+            ingredients=BaseModel.INGREDIENTS,
+            recipe=BaseModel.RECIPE,
+            image=BaseModel.IMG,
+            useful_info=BaseModel.USEFUL_INFO,
+            abv=BaseModel.ABV,
+            volume=BaseModel.VOLUME
+        )
+        return cocktail
+
+
+class TFIdfCocktailModel(BaseModel):
+    &#34;&#34;&#34;
+    TFIdfCocktailModel performs cocktail recipe search by finding the most similar cocktail recipe TFIDF vector
+    for the query.
+    &#34;&#34;&#34;
+    def __init__(self, train: RawDataset):
+        super().__init__()
+        self.train = train
+        self.train_vectors = None
+        self.trained = False
+        self.vectorizer = TfidfVectorizer()
+
+    def normalize(self, matrix):
+        # Use any simple normalization technique
+        return sk.preprocessing.normalize(matrix, norm=&#39;l2&#39;, axis=1)
+
+    def vectorize(self, data: List[str], fit=False):
+        # Use sklearn.feature_extraction.text.TfidfVectorizer
+        if fit:
+            self.vectorizer.fit(data)
+        return self.vectorizer.transform(data)
+
+    def train_on_recipes(self):
+        self.train_vectors = self.normalize(self.vectorize(self.train.get_train_set()[0], True))
+        self.trained = True
+
+    def find_matched_cocktail(self, query_vec):
+        # Use cosine similarity between train vectors and query_vec -&gt; argmax
+        params = {&#39;ingredients&#39;: None, &#39;recipe&#39;: None, &#39;image&#39;: None, &#39;useful_info&#39;: None}
+
+        best_cocktail_id = self.train_vectors.dot(query_vec.T).argmax()
+        recipes, images, useful_info = self.train.get_train_set()
+        params[&#39;recipe&#39;] = recipes[best_cocktail_id]
+        params[&#39;image&#39;] = images[best_cocktail_id]
+        params[&#39;useful_info&#39;] = useful_info[best_cocktail_id]
+        return Cocktail(*params)
+
+    def predict(self, query: str):
+        assert self.trained,\
+            &#34;Model cannot predict before it is trained, please train the model first by calling train_on_recipes.&#34;
+        query_vec = self.normalize(self.vectorize([query]))
+        return self.find_matched_cocktail(query_vec)
+
+
+class BertCocktailModel(BaseModel):
+    &#34;&#34;&#34;
+    BertCocktailModel performs cocktail recipe search by finding the most similar cocktail recipe using pretrained
+    similarity Bert model.
+    &#34;&#34;&#34;
+    def __init__(self, model_config_file, model_vocab_file):
+        super().__init__()
+        self.config = model_config_file
+        self.vocab = model_vocab_file
+        self.model_weights = None
+
+    def tokenize(self):
+        # https://pytorch.org/hub/huggingface_pytorch-transformers/#first-tokenize-the-input
+        pass
+
+    def encode(self):
+        # https://pytorch.org/hub/huggingface_pytorch-transformers/#using-bertmodel-to-encode-the-input-sentence-in-a-sequence-of-last-layer-hidden-states
+        pass
+
+    def load_model_weights(self):
+        # Use config, vocab and model_weights of the pretrained model
+        pass
+
+    def train_on_recipes(self):
+        # instead of training, we can use trained BERT model
+        # that can predict similarity between two texts -&gt; argmax
+        # for example, train model on similarity GLUE dataset (stsb) and predict it on the cocktails data
+        self.model_weights = self.load_model_weights()
+        pass
+
+    def find_matched_cocktail(self, query_enc):
+        # use this as an example: https://pytorch.org/hub/huggingface_pytorch-transformers/#using-modelforquestionanswering-to-do-question-answering-with-bert
+        params = {&#39;ingredients&#39;: None, &#39;recipe&#39;: None, &#39;image&#39;: None, &#39;useful_info&#39;: None}
+        return Cocktail(*params)
+
+    def predict(self, query):
+        query_enc = self.encode(self.tokenize(query))
+        return self.find_matched_cocktail(query_enc)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel"><code class="flex name class">
+<span>class <span class="ident">BaseModel</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseModel:
+    # BaseModel answers are hardcoded for demo only.
+    ORIG_NAME = &#39;Pina Colada&#39;
+    NAME = &#39;Pina Colada 🍍 🥃&#39;
+    INGREDIENTS = [&#39;3 cl rum&#39;, &#39;3 cl coconut cream&#39;, &#39;9 cl pineapple juice&#39;]
+    RECIPE = &#39;Mixed with crushed ice in blender until smooth, then pour into a chilled glass, garnish and serve.  &#39;
+    IMG = None
+    USEFUL_INFO = &#39;was officially invented on August 15 1954 by a bartender named Ramón “Monchito” Marrero&#39;
+    ABV = 0.1  # alcohol by volume in %
+    VOLUME = 70  # in grams
+
+    @staticmethod
+    def predict(query):
+        cocktail = Cocktail(
+            orig_name=BaseModel.ORIG_NAME,
+            name=BaseModel.NAME,
+            ingredients=BaseModel.INGREDIENTS,
+            recipe=BaseModel.RECIPE,
+            image=BaseModel.IMG,
+            useful_info=BaseModel.USEFUL_INFO,
+            abv=BaseModel.ABV,
+            volume=BaseModel.VOLUME
+        )
+        return cocktail</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel">BertCocktailModel</a></li>
+<li><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel">TFIdfCocktailModel</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.ABV"><code class="name">var <span class="ident">ABV</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.IMG"><code class="name">var <span class="ident">IMG</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.INGREDIENTS"><code class="name">var <span class="ident">INGREDIENTS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.NAME"><code class="name">var <span class="ident">NAME</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.ORIG_NAME"><code class="name">var <span class="ident">ORIG_NAME</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.RECIPE"><code class="name">var <span class="ident">RECIPE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.USEFUL_INFO"><code class="name">var <span class="ident">USEFUL_INFO</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.VOLUME"><code class="name">var <span class="ident">VOLUME</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.model.predict.BaseModel.predict"><code class="name flex">
+<span>def <span class="ident">predict</span></span>(<span>query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def predict(query):
+    cocktail = Cocktail(
+        orig_name=BaseModel.ORIG_NAME,
+        name=BaseModel.NAME,
+        ingredients=BaseModel.INGREDIENTS,
+        recipe=BaseModel.RECIPE,
+        image=BaseModel.IMG,
+        useful_info=BaseModel.USEFUL_INFO,
+        abv=BaseModel.ABV,
+        volume=BaseModel.VOLUME
+    )
+    return cocktail</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel"><code class="flex name class">
+<span>class <span class="ident">BertCocktailModel</span></span>
+<span>(</span><span>model_config_file, model_vocab_file)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BertCocktailModel performs cocktail recipe search by finding the most similar cocktail recipe using pretrained
+similarity Bert model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BertCocktailModel(BaseModel):
+    &#34;&#34;&#34;
+    BertCocktailModel performs cocktail recipe search by finding the most similar cocktail recipe using pretrained
+    similarity Bert model.
+    &#34;&#34;&#34;
+    def __init__(self, model_config_file, model_vocab_file):
+        super().__init__()
+        self.config = model_config_file
+        self.vocab = model_vocab_file
+        self.model_weights = None
+
+    def tokenize(self):
+        # https://pytorch.org/hub/huggingface_pytorch-transformers/#first-tokenize-the-input
+        pass
+
+    def encode(self):
+        # https://pytorch.org/hub/huggingface_pytorch-transformers/#using-bertmodel-to-encode-the-input-sentence-in-a-sequence-of-last-layer-hidden-states
+        pass
+
+    def load_model_weights(self):
+        # Use config, vocab and model_weights of the pretrained model
+        pass
+
+    def train_on_recipes(self):
+        # instead of training, we can use trained BERT model
+        # that can predict similarity between two texts -&gt; argmax
+        # for example, train model on similarity GLUE dataset (stsb) and predict it on the cocktails data
+        self.model_weights = self.load_model_weights()
+        pass
+
+    def find_matched_cocktail(self, query_enc):
+        # use this as an example: https://pytorch.org/hub/huggingface_pytorch-transformers/#using-modelforquestionanswering-to-do-question-answering-with-bert
+        params = {&#39;ingredients&#39;: None, &#39;recipe&#39;: None, &#39;image&#39;: None, &#39;useful_info&#39;: None}
+        return Cocktail(*params)
+
+    def predict(self, query):
+        query_enc = self.encode(self.tokenize(query))
+        return self.find_matched_cocktail(query_enc)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="get_drunk_telegram_bot.model.predict.BaseModel" href="#get_drunk_telegram_bot.model.predict.BaseModel">BaseModel</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self):
+    # https://pytorch.org/hub/huggingface_pytorch-transformers/#using-bertmodel-to-encode-the-input-sentence-in-a-sequence-of-last-layer-hidden-states
+    pass</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel.find_matched_cocktail"><code class="name flex">
+<span>def <span class="ident">find_matched_cocktail</span></span>(<span>self, query_enc)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_matched_cocktail(self, query_enc):
+    # use this as an example: https://pytorch.org/hub/huggingface_pytorch-transformers/#using-modelforquestionanswering-to-do-question-answering-with-bert
+    params = {&#39;ingredients&#39;: None, &#39;recipe&#39;: None, &#39;image&#39;: None, &#39;useful_info&#39;: None}
+    return Cocktail(*params)</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel.load_model_weights"><code class="name flex">
+<span>def <span class="ident">load_model_weights</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_model_weights(self):
+    # Use config, vocab and model_weights of the pretrained model
+    pass</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel.predict"><code class="name flex">
+<span>def <span class="ident">predict</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def predict(self, query):
+    query_enc = self.encode(self.tokenize(query))
+    return self.find_matched_cocktail(query_enc)</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel.tokenize"><code class="name flex">
+<span>def <span class="ident">tokenize</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tokenize(self):
+    # https://pytorch.org/hub/huggingface_pytorch-transformers/#first-tokenize-the-input
+    pass</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.BertCocktailModel.train_on_recipes"><code class="name flex">
+<span>def <span class="ident">train_on_recipes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def train_on_recipes(self):
+    # instead of training, we can use trained BERT model
+    # that can predict similarity between two texts -&gt; argmax
+    # for example, train model on similarity GLUE dataset (stsb) and predict it on the cocktails data
+    self.model_weights = self.load_model_weights()
+    pass</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel"><code class="flex name class">
+<span>class <span class="ident">TFIdfCocktailModel</span></span>
+<span>(</span><span>train: <a title="get_drunk_telegram_bot.drinks.preprocessing.RawDataset" href="../drinks/preprocessing.html#get_drunk_telegram_bot.drinks.preprocessing.RawDataset">RawDataset</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>TFIdfCocktailModel performs cocktail recipe search by finding the most similar cocktail recipe TFIDF vector
+for the query.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TFIdfCocktailModel(BaseModel):
+    &#34;&#34;&#34;
+    TFIdfCocktailModel performs cocktail recipe search by finding the most similar cocktail recipe TFIDF vector
+    for the query.
+    &#34;&#34;&#34;
+    def __init__(self, train: RawDataset):
+        super().__init__()
+        self.train = train
+        self.train_vectors = None
+        self.trained = False
+        self.vectorizer = TfidfVectorizer()
+
+    def normalize(self, matrix):
+        # Use any simple normalization technique
+        return sk.preprocessing.normalize(matrix, norm=&#39;l2&#39;, axis=1)
+
+    def vectorize(self, data: List[str], fit=False):
+        # Use sklearn.feature_extraction.text.TfidfVectorizer
+        if fit:
+            self.vectorizer.fit(data)
+        return self.vectorizer.transform(data)
+
+    def train_on_recipes(self):
+        self.train_vectors = self.normalize(self.vectorize(self.train.get_train_set()[0], True))
+        self.trained = True
+
+    def find_matched_cocktail(self, query_vec):
+        # Use cosine similarity between train vectors and query_vec -&gt; argmax
+        params = {&#39;ingredients&#39;: None, &#39;recipe&#39;: None, &#39;image&#39;: None, &#39;useful_info&#39;: None}
+
+        best_cocktail_id = self.train_vectors.dot(query_vec.T).argmax()
+        recipes, images, useful_info = self.train.get_train_set()
+        params[&#39;recipe&#39;] = recipes[best_cocktail_id]
+        params[&#39;image&#39;] = images[best_cocktail_id]
+        params[&#39;useful_info&#39;] = useful_info[best_cocktail_id]
+        return Cocktail(*params)
+
+    def predict(self, query: str):
+        assert self.trained,\
+            &#34;Model cannot predict before it is trained, please train the model first by calling train_on_recipes.&#34;
+        query_vec = self.normalize(self.vectorize([query]))
+        return self.find_matched_cocktail(query_vec)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="get_drunk_telegram_bot.model.predict.BaseModel" href="#get_drunk_telegram_bot.model.predict.BaseModel">BaseModel</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.find_matched_cocktail"><code class="name flex">
+<span>def <span class="ident">find_matched_cocktail</span></span>(<span>self, query_vec)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_matched_cocktail(self, query_vec):
+    # Use cosine similarity between train vectors and query_vec -&gt; argmax
+    params = {&#39;ingredients&#39;: None, &#39;recipe&#39;: None, &#39;image&#39;: None, &#39;useful_info&#39;: None}
+
+    best_cocktail_id = self.train_vectors.dot(query_vec.T).argmax()
+    recipes, images, useful_info = self.train.get_train_set()
+    params[&#39;recipe&#39;] = recipes[best_cocktail_id]
+    params[&#39;image&#39;] = images[best_cocktail_id]
+    params[&#39;useful_info&#39;] = useful_info[best_cocktail_id]
+    return Cocktail(*params)</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.normalize"><code class="name flex">
+<span>def <span class="ident">normalize</span></span>(<span>self, matrix)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normalize(self, matrix):
+    # Use any simple normalization technique
+    return sk.preprocessing.normalize(matrix, norm=&#39;l2&#39;, axis=1)</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.predict"><code class="name flex">
+<span>def <span class="ident">predict</span></span>(<span>self, query: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def predict(self, query: str):
+    assert self.trained,\
+        &#34;Model cannot predict before it is trained, please train the model first by calling train_on_recipes.&#34;
+    query_vec = self.normalize(self.vectorize([query]))
+    return self.find_matched_cocktail(query_vec)</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.train_on_recipes"><code class="name flex">
+<span>def <span class="ident">train_on_recipes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def train_on_recipes(self):
+    self.train_vectors = self.normalize(self.vectorize(self.train.get_train_set()[0], True))
+    self.trained = True</code></pre>
+</details>
+</dd>
+<dt id="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.vectorize"><code class="name flex">
+<span>def <span class="ident">vectorize</span></span>(<span>self, data: List[str], fit=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vectorize(self, data: List[str], fit=False):
+    # Use sklearn.feature_extraction.text.TfidfVectorizer
+    if fit:
+        self.vectorizer.fit(data)
+    return self.vectorizer.transform(data)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="get_drunk_telegram_bot.model" href="index.html">get_drunk_telegram_bot.model</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="get_drunk_telegram_bot.model.predict.BaseModel" href="#get_drunk_telegram_bot.model.predict.BaseModel">BaseModel</a></code></h4>
+<ul class="two-column">
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.ABV" href="#get_drunk_telegram_bot.model.predict.BaseModel.ABV">ABV</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.IMG" href="#get_drunk_telegram_bot.model.predict.BaseModel.IMG">IMG</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.INGREDIENTS" href="#get_drunk_telegram_bot.model.predict.BaseModel.INGREDIENTS">INGREDIENTS</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.NAME" href="#get_drunk_telegram_bot.model.predict.BaseModel.NAME">NAME</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.ORIG_NAME" href="#get_drunk_telegram_bot.model.predict.BaseModel.ORIG_NAME">ORIG_NAME</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.RECIPE" href="#get_drunk_telegram_bot.model.predict.BaseModel.RECIPE">RECIPE</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.USEFUL_INFO" href="#get_drunk_telegram_bot.model.predict.BaseModel.USEFUL_INFO">USEFUL_INFO</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.VOLUME" href="#get_drunk_telegram_bot.model.predict.BaseModel.VOLUME">VOLUME</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BaseModel.predict" href="#get_drunk_telegram_bot.model.predict.BaseModel.predict">predict</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel">BertCocktailModel</a></code></h4>
+<ul class="">
+<li><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel.encode" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel.encode">encode</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel.find_matched_cocktail" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel.find_matched_cocktail">find_matched_cocktail</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel.load_model_weights" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel.load_model_weights">load_model_weights</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel.predict" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel.predict">predict</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel.tokenize" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel.tokenize">tokenize</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.BertCocktailModel.train_on_recipes" href="#get_drunk_telegram_bot.model.predict.BertCocktailModel.train_on_recipes">train_on_recipes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel">TFIdfCocktailModel</a></code></h4>
+<ul class="">
+<li><code><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.find_matched_cocktail" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.find_matched_cocktail">find_matched_cocktail</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.normalize" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.normalize">normalize</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.predict" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.predict">predict</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.train_on_recipes" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.train_on_recipes">train_on_recipes</a></code></li>
+<li><code><a title="get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.vectorize" href="#get_drunk_telegram_bot.model.predict.TFIdfCocktailModel.vectorize">vectorize</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
