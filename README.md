@@ -24,8 +24,7 @@ getdrunk bot supports the next scenarios of communication:
 
 
 **How to start using**
-
-If you want to try using our bot you can write a message to @get_drunk_bot in Telegram.
+If you want to try using our bot, you can write a message to @get_drunk_bot in [Telegram]: (https://t.me/get_drunk_bot Telegram).
 
 If you want to run your own bot follow the instructions below. 
     
@@ -47,7 +46,7 @@ pip install <path-to-root>
 
 (3) Run the command (Please verify you have Python >=3.6.0) 
 ```python
-   python -m get_drunk_telegram_bot --token <token> --port <port> ----web-hook-url <your server url>
+   python -m get_drunk_telegram_bot --token <token> --port <port> --web-hook-url <your server url>
 ```
 Your bot is ready. You may write it a message!
 
