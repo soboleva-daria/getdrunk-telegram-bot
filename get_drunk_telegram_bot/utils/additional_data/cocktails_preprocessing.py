@@ -46,7 +46,7 @@ with open('cocktails.json') as json_file:
                 elif w == 'liqueur':
                     alcohol += float(component['amount']) * default_liqueur_degree
 
-        if len(error_ids) > 0 and error_ids[-1] != cocktail['id']:
+        if (len(error_ids) == 0) or (len(error_ids) > 0 and error_ids[-1] != cocktail['id']):
             cocktail['ABV'] = round(alcohol / volume, 3)
             cocktail['VOLUME'] = round(volume * oz)
 
