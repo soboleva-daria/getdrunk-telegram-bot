@@ -2,13 +2,14 @@
 
 **Description** 
 
-getdrunk bot supports the next scenarios of communication [TODO]:
+getdrunk bot supports the next scenarios of communication:
 -  ask and receive the recipe of the cocktail in return to ingredients provided
 -  ask and receive all the recipes of the cocktails that are similar to the given one
 -  ask and receive current intoxication level (in stages: Sobriety, Euphoria, Excitement, Confusion, ..., Coma, Death)
 -  ask and receive the image of the cocktail
--  ask and receive any useful information about the cocktail (author, date it was invented, degree)
+-  ask and receive any useful information about the cocktail
 -  ask and receive the recipe of the day
+-  ask and recieve the menu information
 -  ask to start the session
 -  ask to end the session
 
@@ -23,8 +24,17 @@ getdrunk bot supports the next scenarios of communication [TODO]:
     
     
 **How to install and run**
-[TODO]
+After clonning, you may use two different ways to run the bot:  
 
+(1) Install the package (Recommended)
+```python
+   python setup.py install
+   python get_drunk_telegram_bot
+```
+(2) Run the command (Please verify you have Python >=3.6.0) 
+```python
+   python -m get_drunk_telegram_bot
+```
 <img src="get_drunk_telegram_bot/images/readme-img.png" width="400" height="350" />
 
 
