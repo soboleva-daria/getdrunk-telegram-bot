@@ -34,3 +34,12 @@ def encode_json(obj):
         return list(obj)
     else:
         return json.JSONEncoder().default(obj)
+
+
+def normalize_text(text):
+    """
+    Provides basic normalization by removing trailing spaces from text.
+
+    :param text: str, text to send to user.
+    """
+    return '\n'.join([line.strip() for line in text.split('\n')])
