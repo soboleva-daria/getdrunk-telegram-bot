@@ -15,7 +15,8 @@ from get_drunk_telegram_bot.model.predict import (
 
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
 
-from get_drunk_telegram_bot.utils.utils import encode_json, decode_json, normalize_text
+from get_drunk_telegram_bot.utils.utils import (
+    encode_json, decode_json, normalize_text)
 
 
 def get_file(filename):
@@ -490,7 +491,9 @@ class GetDrunkBotHandler(TelegramInterface):
 
             orig_name = name.replace('_', '').strip()
             name_with_emoji = emojis[name.replace('_', '').strip()]
-            ingredients = list(map(lambda x: x.strip(), ingredients.split('\n')))
+            ingredients = list(
+                map(lambda x: x.strip(), ingredients.split('\n'))
+            )
             recipe = recipe.strip()
             author = str(author).strip()
             location = str(location).strip()
