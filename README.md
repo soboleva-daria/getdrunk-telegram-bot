@@ -24,6 +24,7 @@ getdrunk bot supports the next scenarios of communication:
     
     
 **How to install and run**
+
 After clonning, you may use two different ways to run the bot:  
 
 (1) Install the package (Recommended)
