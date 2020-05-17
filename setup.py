@@ -43,6 +43,7 @@ setup(
     install_requires=REQUIRED,
     dependency_links=REQUIRED_BY_PATH,
     include_package_data=True,
+    package_data={'get_drunk_telegram_bot': ['utils/*', 'images/*']},
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
