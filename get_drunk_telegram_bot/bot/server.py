@@ -15,7 +15,8 @@ from get_drunk_telegram_bot.model.predict import (
 
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
 
-from get_drunk_telegram_bot.utils.utils import encode_json, decode_json
+from get_drunk_telegram_bot.utils.utils import (
+    encode_json, decode_json, normalize_text)
 
 
 def get_file(filename):
@@ -283,7 +284,7 @@ class GetDrunkBotHandler(TelegramInterface):
 
     def _start_session_and_say_hello(self, chat_id):
         self.db.end_current_session(chat_id)
-        msg = self.normalize_text("""
+        msg = normalize_text("""
             Hey there, wanna get drunk? 💫
 
             Here is what I can do for you:
@@ -300,7 +301,7 @@ class GetDrunkBotHandler(TelegramInterface):
         self._send_message(chat_id, msg)
 
     def _end_session_and_say_bye(self, chat_id):
-        msg = self.normalize_text("""
+        msg = normalize_text("""
             Your cocktail history is empty now.
             You’re welcome anytime! ❤️
             Bye 🥂
@@ -313,7 +314,7 @@ class GetDrunkBotHandler(TelegramInterface):
             print('Model predict starts.')
         cocktail = self.model.predict(ingredients)
 
-        msg = self.normalize_text(f"""
+        msg = normalize_text(f"""
             { cocktail.name }
 
             Ingredients: { ', '.join(cocktail.ingredients).strip() }
@@ -334,7 +335,7 @@ class GetDrunkBotHandler(TelegramInterface):
             self._send_message(chat_id, msg)
         else:
             # TODO: fix here to send real image
-            msg = self.normalize_text(f"""
+            msg = normalize_text(f"""
                 { cocktail.name }
             """)
             self._send_photo(
@@ -346,7 +347,7 @@ class GetDrunkBotHandler(TelegramInterface):
             for cocktail in self.db.get_cocktails_history(chat_id)
         ])
         degree = self._get_intoxication_degree(chat_id)
-        msg = self.normalize_text(f"""
+        msg = normalize_text(f"""
             You are in {degree}.
 
             Here is the list of what you took:
@@ -380,7 +381,7 @@ class GetDrunkBotHandler(TelegramInterface):
             msg = "Oh 🤗 looks like you didn't select the cocktail. " \
                   "Let's try again, just say \\recipe!"
         else:
-            msg = self.normalize_text(f"""
+            msg = normalize_text(f"""
                 {cocktail.name} {cocktail.useful_info}! 🔬
             """)
         self._send_message(chat_id, msg)
@@ -389,9 +390,9 @@ class GetDrunkBotHandler(TelegramInterface):
         weekday_name = datetime.today().strftime("%A")
 
         if self.index is None:
-            self.index = random.randint(0, len(self.recipes_of_the_day))
+            self.index = random.randint(0, len(self.recipes_of_the_day) - 1)
         cocktail = self.recipes_of_the_day[self.index]
-        msg = self.normalize_text(f"""
+        msg = normalize_text(f"""
             Our {weekday_name} menu 👩‍🍳🥳:
 
             {cocktail.name}
@@ -409,7 +410,7 @@ class GetDrunkBotHandler(TelegramInterface):
     def _send_cocktails_menu(self, chat_id):
         cocktail_list = '\n'.join([
             cocktail.name for cocktail in self.recipes_of_the_day])
-        msg = self.normalize_text(f"""
+        msg = normalize_text(f"""
             Menu 🍽️ 😋:
 
             {cocktail_list.strip()}
@@ -417,7 +418,7 @@ class GetDrunkBotHandler(TelegramInterface):
         self._send_message(chat_id, msg)
 
     def _send_help_message(self, chat_id):
-        msg = self.normalize_text("""
+        msg = normalize_text("""
             I am sorry :( I did not get what you mean.
 
             Please try again with these commands:
@@ -451,14 +452,6 @@ class GetDrunkBotHandler(TelegramInterface):
 
     # def ask_to_send_day_recipe(self):
     #     pass
-    @staticmethod
-    def normalize_text(text):
-        """
-        Provides basic normalization by removing trailing spaces from text.
-
-        :param text: str, text to send to user.
-        """
-        return '\n'.join([line.strip() for line in text.split('\n')])
 
     @staticmethod
     def parse_ingredients(text):
@@ -498,7 +491,9 @@ class GetDrunkBotHandler(TelegramInterface):
 
             orig_name = name.replace('_', '').strip()
             name_with_emoji = emojis[name.replace('_', '').strip()]
-            ingredients = map(lambda x: x.strip(), ingredients.split('\n'))
+            ingredients = list(
+                map(lambda x: x.strip(), ingredients.split('\n'))
+            )
             recipe = recipe.strip()
             author = str(author).strip()
             location = str(location).strip()
