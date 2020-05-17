@@ -3,9 +3,9 @@ import random
 import pickle
 import json
 import os
-import pathlib
 import pandas as pd
 
+from pkg_resources import resource_filename, Requirement
 from flask import request, Flask
 from string import punctuation
 from datetime import datetime
@@ -17,7 +17,11 @@ from get_drunk_telegram_bot.model.predict import (
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
 
 
-UTILS_PATH = pathlib.Path('get_drunk_telegram_bot/utils')
+def get_file(filename):
+    return resource_filename(
+        Requirement.parse('get_drunk_telegram_bot'),
+        f'get_drunk_telegram_bot/utils/{filename}'
+    )
 
 
 class TelegramInterface:
@@ -275,8 +279,8 @@ class GetDrunkBotHandler(TelegramInterface):
             msg = self.normalize_text(f"""
                 { cocktail.name }
             """)
-            self._send_photo(chat_id, msg, photo_path=str(
-                UTILS_PATH.joinpath(f'{cocktail.orig_name}.png')))
+            self._send_photo(
+                chat_id, msg, photo_path=get_file(f'{cocktail.orig_name}.png'))
 
     def _send_intoxication_degree(self, chat_id):
         cocktail_list = '\n'.join([
@@ -404,11 +408,11 @@ class GetDrunkBotHandler(TelegramInterface):
     # TODO: put this method into drinks/preprocessing later?
     @staticmethod
     def load_recipes_of_the_day():
-        data = pd.read_csv(str(UTILS_PATH.joinpath('05-CocktailRecipes.csv')))[
+        data = pd.read_csv(get_file('05-CocktailRecipes.csv'))[
             ['RecipeName', 'Ingredients', 'Preparation', 'IMAGE', 'ABV',
              'VOLUME', 'AUTHOR', 'LOCATION', 'OriginalRecipeSource']
         ]
-        with open(str(UTILS_PATH.joinpath('emoji.pkl')), 'rb') as fin:
+        with open(get_file('emoji.pkl'), 'rb') as fin:
             emojis = pickle.load(fin)
 
         recipes = []
