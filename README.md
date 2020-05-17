@@ -21,7 +21,13 @@ getdrunk bot supports the next scenarios of communication:
 - Nikolay Skachkov, 517 group (@Seriont)
 - Alexey Pismenny, 517 group (@alexey-pismenny)
 - Mariia Yavorskaia, 517 group (@IavorskaiaMariia)
-    
+
+
+**How to start using**
+
+If you want to try using our bot you can write a message to @get_drunk_bot in Telegram.
+
+If you want to run your own bot follow the instructions below. 
     
 **How to install and run**
 
@@ -29,13 +35,22 @@ After clonning, you may use two different ways to run the bot:
 
 (1) Install the package (Recommended)
 ```python
-   python setup.py install
-   python get_drunk_telegram_bot
+pip install <path-to-root>
 ```
-(2) Run the command (Please verify you have Python >=3.6.0) 
+(2) Preparing to run your own bot
+- Write a message to @BotFather in Telegram. It will give you your own ```<token>``` if you want to run your own GetDrunkBot
+- Bind your port with external url. For example you may run ngrok. After installing ngrok you should run:
+```
+./ngrok http <port>
+```
+```<your server url>``` is the one returned by this command. Note: it should start with ```https:```.
+
+(3) Run the command (Please verify you have Python >=3.6.0) 
 ```python
-   python -m get_drunk_telegram_bot
+   python -m get_drunk_telegram_bot --token <token> --port <port> ----web-hook-url <your server url>
 ```
+Your bot is ready. You may write it a message!
+
 <img src="get_drunk_telegram_bot/images/readme-img.png" width="400" height="350" />
 
 
