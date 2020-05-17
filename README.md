@@ -13,7 +13,7 @@ getdrunk bot supports the next scenarios of communication [TODO]:
 -  ask to end the session
 
 **Examples of the dialogs supported**
-<img src="images/examples.png" width="1000" height="350" />
+<img src="get_drunk_telegram_bot/images/examples.png" width="1000" height="350" />
 
 **The Authors**
 - Daria Soboleva, 517 group (@soboleva-daria)
@@ -25,6 +25,6 @@ getdrunk bot supports the next scenarios of communication [TODO]:
 **How to install and run**
 [TODO]
 
-<img src="images/readme-img.png" width="400" height="350" />
+<img src="get_drunk_telegram_bot/images/readme-img.png" width="400" height="350" />
 
 
