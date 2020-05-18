@@ -21,7 +21,7 @@ class BaseModel:
     )
     IMG = None
     USEFUL_INFO = (
-        'was officially invented on August 15 1954 by a bartender'
+        'was officially invented on August 15 1954 by a bartender '
         'named Ramón “Monchito” Marrero'
     )
     ABV = 0.1  # alcohol by volume in %
@@ -85,8 +85,8 @@ class TFIdfCocktailModel(BaseModel):
 
     def predict(self, query: str):
         assert self.trained, (
-            "Model cannot predict before it is trained, please train the "
-            "model first by calling train_on_recipes."
+            "Model cannot predict before it is trained, please train the\
+            model first by calling train_on_recipes."
         )
         query_vec = self.normalize(self.vectorize([query]))
         return self.find_matched_cocktail(query_vec)
@@ -120,7 +120,10 @@ class BertCocktailModel(BaseModel):
         batches = []
 
         for i in range(0, len(train_texts), batch_size):
-            tokens_tensor = torch.tensor([self.encode(self.tokenize(text)) for text in train_texts[i:i + batch_size]])
+            tokens_tensor = torch.tensor([
+                            self.encode(self.tokenize(text))
+                            for text in train_texts[i:i + batch_size]
+                            ])
             encoded_layers, _ = self.model(tokens_tensor)
             batches.append(encoded_layers[-1][:, 0, :])
 
@@ -131,7 +134,8 @@ class BertCocktailModel(BaseModel):
         params = {'ingredients': None, 'recipe': None,
                   'image': None, 'useful_info': None}
 
-        best_cocktail_id = torch.mm(self.train_vectors, query_enc.T).argmax().item()
+        best_cocktail_id = torch.mm(
+                   self.train_vectors, query_enc.T).argmax().item()
         recipes, images, useful_info = self.train.get_train_set()
         params['recipe'] = recipes[best_cocktail_id]
         params['image'] = images[best_cocktail_id]
@@ -140,7 +144,8 @@ class BertCocktailModel(BaseModel):
 
     def predict(self, query):
         assert self.trained, \
-            "Model cannot predict before it is trained, please train the model first by calling train_on_recipes."
+            "Model cannot predict before it is trained\
+             please train the model first by calling train_on_recipes."
         query_enc = self.encode(self.tokenize(query))
         return self.find_matched_cocktail(query_enc)
 
@@ -163,5 +168,6 @@ class STSBertCocktailModel(BaseModel):
         return np.array(predictions).argmax()
 
     def predict(self, query):
-        params = {'ingredients': None, 'recipe': None, 'image': None, 'useful_info': None}
+        params = {'ingredients': None, 'recipe': None, 'image': None,
+                  'useful_info': None}
         return Cocktail(*params)
