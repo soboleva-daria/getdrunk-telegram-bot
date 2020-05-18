@@ -1,0 +1,1 @@
+get_drunk_telegram_bot/data/*.json filter=lfs diff=lfs merge=lfs -text
