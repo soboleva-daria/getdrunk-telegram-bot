@@ -1,5 +1,6 @@
 from utils import get_handler, tmp_dir, run_test_request
 
+
 def test_start():
     handler = get_handler()
     response, _ = run_test_request(handler, "\\start")
@@ -31,11 +32,14 @@ def test_recipe():
 
         Ingredients: 3 cl rum, 3 cl coconut cream, 9 cl pineapple juice
 
-        Method: Mixed with crushed ice in blender until smooth, then pour into a chilled glass, garnish and serve.  
+        Method: Mixed with crushed ice in blender until smooth,\
+ then pour into a chilled glass, garnish and serve.
 
         Enjoy! 💫
     """
-    correct_response = '\n'.join([line.strip() for line in correct_response.split('\n')])
+    correct_response = '\n'.join(
+        [line.strip() for line in correct_response.split('\n')]
+    )
     response, _ = run_test_request(handler, "\\recipe {}".format(
         ['3 cl rum', '3 cl coconut cream', '9 cl pineapple juice']))
     assert response
@@ -69,7 +73,7 @@ def test_info():
     _, _ = run_test_request(handler, "\\start")
 
     correct_response1 = "Oh 🤗 looks like you didn't select the cocktail. " \
-                  "Let's try again, just say \\recipe!"
+        "Let's try again, just say \\recipe!"
 
     response1, _ = run_test_request(handler, "\\info")
     assert response1
@@ -80,10 +84,13 @@ def test_info():
         ['3 cl rum', '3 cl coconut cream', '9 cl pineapple juice']))
 
     correct_response2 = """
-         Pina Colada 🍍 🥃 was officially invented on August 15 1954 by a bartender named Ramón “Monchito” Marrero! 🔬
+         Pina Colada 🍍 🥃 was officially invented on August 15 1954\
+ by a bartender named Ramón “Monchito” Marrero! 🔬
     """
     response2, _ = run_test_request(handler, "\\info")
-    correct_response2 = '\n'.join([line.strip() for line in correct_response2.split('\n')])
+    correct_response2 = '\n'.join(
+            [line.strip() for line in correct_response2.split('\n')]
+    )
     assert response2
     assert type(response2) is str
     assert response2 == correct_response2
@@ -103,4 +110,3 @@ def test_recipe_of_the_day():
 def test_explore():
     # TODO: add //explore functionality
     pass
-
