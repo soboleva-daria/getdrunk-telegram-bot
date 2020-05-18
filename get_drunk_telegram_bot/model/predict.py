@@ -3,6 +3,10 @@ from get_drunk_telegram_bot.drinks.preprocessing import RawDataset
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sklearn as sk
+import numpy as np
+import torch
+from pytorch_pretrained_bert import BertTokenizer, BertModel
+from semantic_text_similarity.models import WebBertSimilarity
 from typing import List
 
 
@@ -41,7 +45,7 @@ class BaseModel:
 class TFIdfCocktailModel(BaseModel):
     """
     TFIdfCocktailModel performs cocktail recipe search by finding the most
-    similar cocktail recipe TFIDF vector for the query.
+    similar cocktail recipe TF-IDF vector for the query.
     """
     def __init__(self, train: RawDataset):
         super().__init__()
@@ -91,42 +95,73 @@ class TFIdfCocktailModel(BaseModel):
 class BertCocktailModel(BaseModel):
     """
     BertCocktailModel performs cocktail recipe search by finding the most
-    similar cocktail recipe using pretrained similarity Bert model.
+    similar cocktail recipe using Bert model.
     """
-    def __init__(self, model_config_file, model_vocab_file):
+    def __init__(self, train: RawDataset, model_name='bert-base-uncased'):
         super().__init__()
-        self.config = model_config_file
-        self.vocab = model_vocab_file
-        self.model_weights = None
+        self.tokenizer = BertTokenizer.from_pretrained(model_name)
+        self.model = BertModel.from_pretrained(model_name)
+        self.max_sequence_len = 256
+        self.train = train
+        self.train_vectors = None
+        self.trained = False
 
-    def tokenize(self):
-        # https://pytorch.org/hub/huggingface_pytorch-transformers/#first-tokenize-the-input
-        pass
+    def tokenize(self, text: str):
+        tokenized_text = self.tokenizer.tokenize(text)
+        return ['CLS'] + tokenized_text + ['SEP'] + \
+               ['PAD'] * (self.max_sequence_len - len(tokenized_text) - 2)
 
-    def encode(self):
-        # https://pytorch.org/hub/huggingface_pytorch-transformers/#using-bertmodel-to-encode-the-input-sentence-in-a-sequence-of-last-layer-hidden-states
-        pass
+    def encode(self, tokenized_text: List):
+        return self.tokenizer.convert_tokens_to_ids(tokenized_text)
 
-    def load_model_weights(self):
-        # Use config, vocab and model_weights of the pretrained model
-        pass
+    def train_on_recipes(self, batch_size=32):
 
-    def train_on_recipes(self):
-        # instead of training, we can use trained BERT model
-        # that can predict similarity between two texts -> argmax
-        # for example, train model on similarity GLUE dataset (stsb)
-        # and predict it on the cocktails data
-        self.model_weights = self.load_model_weights()
-        pass
+        train_texts = self.train.get_train_set()[0]
+        batches = []
+
+        for i in range(0, len(train_texts), batch_size):
+            tokens_tensor = torch.tensor([self.encode(self.tokenize(text)) for text in train_texts[i:i + batch_size]])
+            encoded_layers, _ = self.model(tokens_tensor)
+            batches.append(encoded_layers[-1][:, 0, :])
+
+        self.train_vectors = torch.cat(batches)
+        self.trained = True
 
     def find_matched_cocktail(self, query_enc):
-        # use this as an example: https://pytorch.org/hub/huggingface_pytorch-transformers/#using-modelforquestionanswering-to-do-question-answering-with-bert  # noqa
-        params = {
-            'ingredients': None, 'recipe': None,
-            'image': None, 'useful_info': None
-        }
+        params = {'ingredients': None, 'recipe': None,
+                  'image': None, 'useful_info': None}
+
+        best_cocktail_id = torch.mm(self.train_vectors, query_enc.T).argmax().item()
+        recipes, images, useful_info = self.train.get_train_set()
+        params['recipe'] = recipes[best_cocktail_id]
+        params['image'] = images[best_cocktail_id]
+        params['useful_info'] = useful_info[best_cocktail_id]
         return Cocktail(*params)
 
     def predict(self, query):
+        assert self.trained, \
+            "Model cannot predict before it is trained, please train the model first by calling train_on_recipes."
         query_enc = self.encode(self.tokenize(query))
         return self.find_matched_cocktail(query_enc)
+
+
+class STSBertCocktailModel(BaseModel):
+    """
+    STSBertCocktailModel performs cocktail recipe search by finding
+    the most similar cocktail recipe using pretrained similarity Bert model.
+    """
+    def __init__(self, train: RawDataset):
+        super().__init__()
+        self.train = train
+        self.model = WebBertSimilarity(device='cpu', batch_size=10)
+
+    def find_one_best_cocktail(self, query: str, data: List):
+        """
+        data: List of n best cocktail's recipes
+        """
+        predictions = self.model.predict([(recipe, query) for recipe in data])
+        return np.array(predictions).argmax()
+
+    def predict(self, query):
+        params = {'ingredients': None, 'recipe': None, 'image': None, 'useful_info': None}
+        return Cocktail(*params)

@@ -3,3 +3,6 @@ requests
 numpy
 pandas
 pytest-pep8
+torch
+pytorch_pretrained_bert
+semantic_text_similarity
