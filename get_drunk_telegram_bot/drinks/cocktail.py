@@ -3,7 +3,9 @@ from copy import copy, deepcopy
 
 class Cocktail:
 
-    def __init__(self, name, ingredients, recipe, image, useful_info, abv, volume):
+    def __init__(self, orig_name, name, ingredients, recipe, image,
+                 useful_info, abv, volume):
+        self.orig_name = orig_name
         self.name = name
         self._ingredients = ingredients
         self.recipe = recipe
