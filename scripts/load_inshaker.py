@@ -1,13 +1,12 @@
 import argparse
 import json
-from typing import Any, Dict, Iterable, Optional
 import re
 from pathlib import Path
+from typing import Any, Dict, Iterable, Optional
+from urllib.error import HTTPError
+from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
-from urllib.error import HTTPError
-
 
 URL = 'https://us.inshaker.com'
 
@@ -28,7 +27,8 @@ def get_characteristics(soup: BeautifulSoup) -> Iterable[str]:
 
 def get_ingredients(soup: BeautifulSoup) -> Iterable[Dict[str, Any]]:
     ingredients = []
-    ingredients_info = soup.select('dl.ingredients')[0].select('a.common-good-info')
+    ingredients_table = soup.select('dl.ingredients')[0]
+    ingredients_info = ingredients_table.select('a.common-good-info')
     for ingredient_info in ingredients_info:
         ingredient = {}
         ingredient['name'] = re.search(NAME_PATTERN, str(ingredient_info)).group(1)
@@ -51,7 +51,9 @@ def get_tools(soup: BeautifulSoup) -> Iterable[Dict[str, Any]]:
 
 
 def get_recipe(soup: BeautifulSoup) -> Iterable[str]:
-    return list(map(lambda x: x.get_text().strip(), soup.select('ul.steps')[0].select('li')))
+    return list(
+        map(lambda x: x.get_text().strip(), soup.select('ul.steps')[0].select('li'))
+    )
 
 
 def get_image(soup: BeautifulSoup) -> str:
@@ -60,7 +62,7 @@ def get_image(soup: BeautifulSoup) -> str:
 
 def get_coctail_info(coctail_id: int):
     cocktail_url = URL + f'/cocktails/{coctail_id}'
-    html = urlopen(cocktail_url) 
+    html = urlopen(cocktail_url)
     soup = BeautifulSoup(html, 'html.parser')
     coctail_info = {}
     coctail_info['id'] = coctail_id
