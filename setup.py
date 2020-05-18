@@ -39,7 +39,7 @@ setup(
     long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=('tests',)),
+    packages=find_packages(exclude=('tests','scripts')),
     install_requires=REQUIRED,
     dependency_links=REQUIRED_BY_PATH,
     include_package_data=True,
