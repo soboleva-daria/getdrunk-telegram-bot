@@ -312,7 +312,7 @@ class GetDrunkBotHandler(TelegramInterface):
     def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
         if self.debug:
             print('Model predict starts.')
-        cocktail = self.model.predict(ingredients)[0]
+        cocktail = random.choice(self.model.predict(ingredients))
 
         msg = normalize_text(f"""
             { cocktail.name }

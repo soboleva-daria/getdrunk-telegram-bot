@@ -1,31 +1,61 @@
 from copy import copy, deepcopy
+from typing import Dict, List, Optional
 
 
 class Cocktail:
+    def __init__(self,
+                 name: str,
+                 characteristics: List[str],
+                 ingredients: List[Dict[str, str]],
+                 tools: List[Dict[str, str]],
+                 recipe: List[str],
+                 image: str,
+                 abv: Optional[float] = None,
+                 volume: Optional[float] = None):
+        self.__name = name
+        self.__characteristics = characteristics
+        self.__ingredients = ingredients
+        self.__tools = tools
+        self.__recipe = recipe
+        self.__image = image
+        self.__abv = abv
+        self.__volume = volume
 
-    def __init__(self, orig_name, name, ingredients, recipe, image,
-                 useful_info, abv, volume):
-        self.orig_name = orig_name
-        self.name = name
-        self._ingredients = ingredients
-        self.recipe = recipe
-        self._image = image
-        self.useful_info = useful_info
-        self.abv = abv
-        self.volume = volume
+    def __repr__(self):
+        return f"""
+        {self.__name}
+        characteristics: {self.__characteristics}
+        ingredients: {self.__ingredients}
+        tools: {self.__tools}
+        recipe: {self.__recipe}
+        abv: {self.__abv}
+        volume: {self.__volume}
+        """
+
+    @property
+    def name(self):
+        return copy(self.__name)
 
     @property
     def ingredients(self):
-        return copy(self._ingredients)
+        return copy(self.__ingredients)
 
     @ingredients.setter
     def ingredients(self, ingredients):
-        self._ingredients = copy(ingredients)
+        self.__ingredients = copy(ingredients)
 
     @property
     def image(self):
-        return deepcopy(self._image)
+        return deepcopy(self.__image)
 
     @image.setter
     def image(self, image):
-        self._image = deepcopy(image)
+        self.__image = deepcopy(image)
+
+    @property
+    def ingredients_str(self):
+        return ' '.join(map(lambda x: x['name'].lower(), self.__ingredients))
+
+    @property
+    def recipe(self) -> str:
+        return '\n'.join([f'{i}. {step}' for i, step in enumerate(self.__recipe, 1)])

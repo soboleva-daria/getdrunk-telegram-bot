@@ -11,13 +11,13 @@ class CosineSimilarity(ISimilarity):
         if product == 0:
             return 0
 
-        return product / (numpy.linalg.norm(first) * numpy.linalg.norm(second))
+        return product / (np.linalg.norm(first) * np.linalg.norm(second))
 
     def rank(self, anchor: np.array, candidates: np.array) -> Tuple[np.array, np.array]:
-        products = numpy.inner(anchor, candidates)
+        products = np.inner(anchor, candidates)
 
-        norms = numpy.linalg.norm(anchor) * numpy.linalg.norm(candidates, axis=1)
+        norms = np.linalg.norm(anchor) * np.linalg.norm(candidates, axis=1)
         norms[norms == 0] = 1
 
         similarities = products / norms
-        return similarities, numpy.argsort(-similarities)
+        return similarities, np.argsort(-similarities)
