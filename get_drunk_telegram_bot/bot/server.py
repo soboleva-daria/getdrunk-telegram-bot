@@ -10,13 +10,17 @@ from flask import request, Flask
 from string import punctuation
 from datetime import datetime
 
-from get_drunk_telegram_bot.model.predict import (
-    BaseModel, TFIdfCocktailModel, BertCocktailModel)
-
+from get_drunk_telegram_bot.model import (
+    BaseModel, EmbederModel)
+from get_drunk_telegram_bot.embeder import TfidfEmbeder, BertEmbeder
+from get_drunk_telegram_bot.drinks.dataset import Dataset
+from get_drunk_telegram_bot.similarity import CosineSimilarity
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
 
 from get_drunk_telegram_bot.utils.utils import (
     encode_json, decode_json, normalize_text)
+
+_EMBEDER_MIN_SIMILARITY = 0.75
 
 
 def get_file(filename):
@@ -226,13 +230,26 @@ class GetDrunkBotHandler(TelegramInterface):
         self._create_model()
 
     def _create_model(self):
+        dataset = Dataset()
+        similarity=CosineSimilarity()
         if self.model_name == 'BaseModel':
             self.model = BaseModel()
         elif self.model_name == 'TFIdfCocktailModel':
-            self.model = TFIdfCocktailModel(self.train).train_on_recipes()
+            embeder = TfidfEmbeder()
+            self.model = EmbederModel(
+                embeder=embeder,
+                dataset=dataset,
+                similarity=similarity,
+                min_similarity=_EMBEDER_MIN_SIMILARITY,
+            )
         elif self.model_name == 'BertCocktailModel':
-            self.model = BertCocktailModel(self.model_config_file,
-                                           self.model_vocab_file)
+            embeder = BertEmbeder()
+            self.model = EmbederModel(
+                embeder=embeder,
+                dataset=dataset,
+                similarity=similarity,
+                min_similarity=_EMBEDER_MIN_SIMILARITY,
+            )
         else:
             raise ValueError(
                 f"Error in model_name. Available models: "
@@ -312,7 +329,7 @@ class GetDrunkBotHandler(TelegramInterface):
     def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
         if self.debug:
             print('Model predict starts.')
-        cocktail = random.choice(self.model.predict(ingredients))
+        cocktail = random.choice(self.model.predict(' '.join(ingredients)))
 
         msg = normalize_text(f"""
             { cocktail.name }

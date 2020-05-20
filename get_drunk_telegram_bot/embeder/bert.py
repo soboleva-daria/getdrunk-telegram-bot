@@ -16,16 +16,12 @@ class BertEmbeder(IEmbeder):
     """
     def __init__(
         self,
-        train: RawDataset,
         model_name='bert-base-uncased',
         batch_size: int = 32,
     ):
         self.tokenizer = BertTokenizer.from_pretrained(model_name)
         self.model = BertModel.from_pretrained(model_name)
         self.max_sequence_len = 256
-        self.train = train
-        self.train_vectors = None
-        self.trained = False
         self.batch_size = 32
 
     def tokenize(self, text: str):
