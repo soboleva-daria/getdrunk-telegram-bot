@@ -6,13 +6,21 @@ from get_drunk_telegram_bot.model import IModel
 
 class BaseModel(IModel):
     # BaseModel answers are hardcoded for demo only.
-    ORIG_NAME = 'Pina Colada'
     NAME = 'Pina Colada 🍍 🥃'
-    INGREDIENTS = ['3 cl rum', '3 cl coconut cream', '9 cl pineapple juice']
-    RECIPE = (
-        'Mixed with crushed ice in blender until smooth, then pour into a '
-        'chilled glass, garnish and serve.'
-    )
+    CHARACTERISTICS = ['sweet']
+    INGREDIENTS = [
+        {'name': 'Rum', 'amount': '3', 'unit': 'cl'},
+        {'name': 'Coconut cream', 'amount': '3', 'unit': 'cl'},
+        {'name': 'Pineapple juice', 'amount': '9', 'unit': 'cl'},
+    ]
+    TOOLS =  [
+        {'name': 'Cocktail glass', 'amount': '1', 'unit': 'piece'},
+        {'name': 'Shaker', 'amount': '1', 'unit': 'piece'},
+    ]
+    RECIPE = [
+        'Mixed with crushed ice in blender until smooth',
+        'pour into a chilled glass, garnish and serve.'
+    ]
     IMG = None
     USEFUL_INFO = (
         'was officially invented on August 15 1954 by a bartender '
@@ -24,9 +32,10 @@ class BaseModel(IModel):
     @staticmethod
     def predict(query: str) -> List[Cocktail]:
         cocktail = Cocktail(
-            orig_name=BaseModel.ORIG_NAME,
             name=BaseModel.NAME,
+            characteristics=BaseModel.CHARACTERISTICS,
             ingredients=BaseModel.INGREDIENTS,
+            tools=BaseModel.TOOLS,
             recipe=BaseModel.RECIPE,
             image=BaseModel.IMG,
             useful_info=BaseModel.USEFUL_INFO,

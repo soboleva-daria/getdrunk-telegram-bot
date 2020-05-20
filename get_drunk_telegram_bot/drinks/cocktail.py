@@ -9,7 +9,8 @@ class Cocktail:
                  ingredients: List[Dict[str, str]],
                  tools: List[Dict[str, str]],
                  recipe: List[str],
-                 image: str,
+                 image: Optional[str] = None,
+                 useful_info: Optional[str] = None,
                  abv: Optional[float] = None,
                  volume: Optional[float] = None):
         self.__name = name
@@ -18,6 +19,7 @@ class Cocktail:
         self.__tools = tools
         self.__recipe = recipe
         self.__image = image
+        self.__useful_info = useful_info
         self.__abv = abv
         self.__volume = volume
 
@@ -59,3 +61,10 @@ class Cocktail:
     @property
     def recipe(self) -> str:
         return '\n'.join([f'{i}. {step}' for i, step in enumerate(self.__recipe, 1)])
+
+    @property
+    def pretty_ingredients(self) -> List[str]:
+        return [
+            f"{ingredient['name']} {ingredient['amount']} {ingredient['unit']}"
+            for ingredient in self.__ingredients
+        ]

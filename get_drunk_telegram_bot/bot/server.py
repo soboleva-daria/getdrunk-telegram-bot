@@ -334,7 +334,7 @@ class GetDrunkBotHandler(TelegramInterface):
         msg = normalize_text(f"""
             { cocktail.name }
 
-            Ingredients: { ', '.join(cocktail.ingredients).strip() }
+            Ingredients: { ', '.join(cocktail.pretty_ingredients).strip() }
 
             Method: { cocktail.recipe }
 
