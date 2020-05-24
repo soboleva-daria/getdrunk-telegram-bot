@@ -2,6 +2,7 @@ from copy import copy, deepcopy
 from typing import Dict, List, Optional
 from PIL import Image
 import requests
+from io import BytesIO
 
 from lazy import lazy
 
@@ -68,7 +69,7 @@ class Cocktail:
     def image(self):
         if self._image:
             response = requests.get(self._image)
-            image = Image.open(response.raw)
+            image = Image.open(BytesIO(response.content))
             return image
         return None
 

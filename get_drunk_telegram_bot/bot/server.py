@@ -365,6 +365,12 @@ class GetDrunkBotHandler(TelegramInterface):
                 "Let's try again, just say \\recipe!"
             )
             self._send_message(chat_id, msg)
+        elif cocktail.image is None:
+            msg = (
+                "Oh 😭 looks like we don't have image for that cocktail. "
+                "Let's try again, just say \\recipe!"
+            )
+            self._send_message(chat_id, msg)
         else:
             # TODO: fix here to send real image
             msg = normalize_text(
