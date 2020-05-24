@@ -613,6 +613,6 @@ def create_server(args):
         else:
             return 'Hello, world!'
 
-        return {'ok': True}
+        return json.dumps({'ok': True})
 
     return app

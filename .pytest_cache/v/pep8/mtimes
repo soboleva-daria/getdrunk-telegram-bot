@@ -18,7 +18,7 @@
     ]
   ],
   "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/bot/server.py": [
-    1590350461.034359,
+    1590351516.5108202,
     [
       "W503"
     ]
@@ -67,6 +67,12 @@
   ],
   "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/embeder/abstract.py": [
     1590345862.9480727,
+    [
+      "W503"
+    ]
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/embeder/bert.py": [
+    1590350763.077925,
     [
       "W503"
     ]
