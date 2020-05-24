@@ -10,9 +10,7 @@ from bs4 import BeautifulSoup
 
 URL = 'https://us.inshaker.com'
 
-NAME_PATTERN = re.compile(
-    r'<a class="common-good-info".*>(.*)<div class="good-count">'
-)
+NAME_PATTERN = re.compile(r'<a class="common-good-info".*>(.*)<div class="good-count">')
 AMOUNT_PATTERN = re.compile(r'<amount>(.*)</amount>')
 UNIT_PATTERN = re.compile(r'<unit>(.*)</unit>')
 
@@ -33,15 +31,9 @@ def get_ingredients(soup: BeautifulSoup) -> Iterable[Dict[str, Any]]:
     ingredients_info = ingredients_table.select('a.common-good-info')
     for ingredient_info in ingredients_info:
         ingredient = {}
-        ingredient['name'] = re.search(
-            NAME_PATTERN, str(ingredient_info)
-        ).group(1)
-        ingredient['amount'] = re.search(
-            AMOUNT_PATTERN, str(ingredient_info)
-        ).group(1)
-        ingredient['unit'] = re.search(
-            UNIT_PATTERN, str(ingredient_info)
-        ).group(1)
+        ingredient['name'] = re.search(NAME_PATTERN, str(ingredient_info)).group(1)
+        ingredient['amount'] = re.search(AMOUNT_PATTERN, str(ingredient_info)).group(1)
+        ingredient['unit'] = re.search(UNIT_PATTERN, str(ingredient_info)).group(1)
         ingredients.append(ingredient)
     return ingredients
 
@@ -60,10 +52,7 @@ def get_tools(soup: BeautifulSoup) -> Iterable[Dict[str, Any]]:
 
 def get_recipe(soup: BeautifulSoup) -> Iterable[str]:
     return list(
-        map(
-            lambda x: x.get_text().strip(),
-            soup.select('ul.steps')[0].select('li')
-        )
+        map(lambda x: x.get_text().strip(), soup.select('ul.steps')[0].select('li'))
     )
 
 

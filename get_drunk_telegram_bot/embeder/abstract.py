@@ -16,4 +16,3 @@ class IEmbeder(metaclass=abc.ABCMeta):
         Returns:
             vectors: array
         """
-

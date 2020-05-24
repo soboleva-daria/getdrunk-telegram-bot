@@ -15,7 +15,7 @@ def parse_server_args():
 if __name__ == '__main__':
     args = parse_server_args()
     if args.debug:
-        print("Creating server...")
+        print('Creating server...')
     app = create_server(args)
 
     # use_reloader is false due to problems with CUDA and multiprocessing

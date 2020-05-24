@@ -3,19 +3,22 @@ import logging
 import pickle
 from pathlib import Path
 
-from sklearn.pipeline import FeatureUnion
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import FeatureUnion
 
 from get_drunk_telegram_bot.drinks.dataset import Dataset
 
-_DEFAULT_MODEL_OUT = Path('../get_drunk_telegram_bot/embeder/resource/feature_model.joblib')
+_DEFAULT_MODEL_OUT = Path(
+    '../get_drunk_telegram_bot/embeder/resource/feature_model.joblib'
+)
 
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-dd', '--data_dir', type=Path, default=_DEFAULT_MODEL_OUT)
+
 
 def train():
     args = parser.parse_args()

@@ -3,16 +3,18 @@ from typing import Dict, List, Optional
 
 
 class Cocktail:
-    def __init__(self,
-                 name: str,
-                 characteristics: List[str],
-                 ingredients: List[Dict[str, str]],
-                 tools: List[Dict[str, str]],
-                 recipe: List[str],
-                 image: Optional[str] = None,
-                 useful_info: Optional[str] = None,
-                 abv: Optional[float] = None,
-                 volume: Optional[float] = None):
+    def __init__(
+        self,
+        name: str,
+        characteristics: List[str],
+        ingredients: List[Dict[str, str]],
+        tools: List[Dict[str, str]],
+        recipe: List[str],
+        image: Optional[str] = None,
+        useful_info: Optional[str] = None,
+        abv: Optional[float] = None,
+        volume: Optional[float] = None,
+    ):
         self.__name = name
         self.__characteristics = characteristics
         self.__ingredients = ingredients

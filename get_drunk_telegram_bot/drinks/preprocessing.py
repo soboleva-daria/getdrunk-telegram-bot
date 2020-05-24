@@ -1,6 +1,10 @@
 from copy import copy, deepcopy
-from .download import (CocktailRecipesDownloader, CocktailImagesDownloader,
-                       CocktailUsefulInfoDownloader)
+
+from .download import (
+    CocktailImagesDownloader,
+    CocktailRecipesDownloader,
+    CocktailUsefulInfoDownloader,
+)
 
 
 class RawDataset:
@@ -11,6 +15,7 @@ class RawDataset:
     TODO: make an interface via setter, getter, modify to allow adding new recipes.
     TODO: maybe split in 2 classes: RawDataset, Dataset.
     """
+
     def __init__(self):
         self.recipes = None
         self.images = None

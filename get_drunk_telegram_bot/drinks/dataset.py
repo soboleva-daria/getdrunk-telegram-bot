@@ -1,18 +1,19 @@
 import logging
 from typing import Dict, List, Optional
 
-from get_drunk_telegram_bot.data import load_data, PROCESSED_COCKTAILS
+from get_drunk_telegram_bot.data import PROCESSED_COCKTAILS, load_data
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
-
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
+
 class Dataset:
     def __init__(self):
-        coctails_info = map(self.__preprocess_coctail_info, load_data(PROCESSED_COCKTAILS))
+        coctails_info = map(
+            self.__preprocess_coctail_info, load_data(PROCESSED_COCKTAILS)
+        )
         self.__coctails = {
-            i: Cocktail(**coctail_info)
-            for i, coctail_info in enumerate(coctails_info)
+            i: Cocktail(**coctail_info) for i, coctail_info in enumerate(coctails_info)
         }
 
     def __preprocess_coctail_info(self, coctail_info: Dict) -> Dict:

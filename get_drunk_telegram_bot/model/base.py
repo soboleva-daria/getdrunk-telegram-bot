@@ -13,13 +13,13 @@ class BaseModel(IModel):
         {'name': 'Coconut cream', 'amount': '3', 'unit': 'cl'},
         {'name': 'Pineapple juice', 'amount': '9', 'unit': 'cl'},
     ]
-    TOOLS =  [
+    TOOLS = [
         {'name': 'Cocktail glass', 'amount': '1', 'unit': 'piece'},
         {'name': 'Shaker', 'amount': '1', 'unit': 'piece'},
     ]
     RECIPE = [
         'Mixed with crushed ice in blender until smooth',
-        'pour into a chilled glass, garnish and serve.'
+        'pour into a chilled glass, garnish and serve.',
     ]
     IMG = None
     USEFUL_INFO = (
@@ -40,6 +40,6 @@ class BaseModel(IModel):
             image=BaseModel.IMG,
             useful_info=BaseModel.USEFUL_INFO,
             abv=BaseModel.ABV,
-            volume=BaseModel.VOLUME
+            volume=BaseModel.VOLUME,
         )
         return [cocktail]

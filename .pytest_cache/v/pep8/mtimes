@@ -1,0 +1,142 @@
+{
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/__init__.py": [
+    1589810716.956587,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/__main__.py": [
+    1590345863.6320808,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/bot/__init__.py": [
+    1589810716.956587,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/bot/server.py": [
+    1590345863.6560812,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/data/__init__.py": [
+    1590342455.691846,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/drinks/__init__.py": [
+    1589810716.956587,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/drinks/cocktail.py": [
+    1590345863.0080736,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/drinks/dataset.py": [
+    1590345863.5200796,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/drinks/download.py": [
+    1590345862.9840732,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/drinks/preprocessing.py": [
+    1590345863.5200796,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/embeder/__init__.py": [
+    1590342510.7324958,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/embeder/abstract.py": [
+    1590345862.9480727,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/embeder/resource/__init__.py": [
+    1590342510.7324958,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/embeder/tfidf.py": [
+    1590342521.9526281,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/model/__init__.py": [
+    1590342521.9526281,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/model/abstract.py": [
+    1590342521.9526281,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/model/base.py": [
+    1590345863.0120735,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/model/predictor.py": [
+    1590345863.5240796,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/model/stsbert.py": [
+    1590345863.0160735,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/similarity/__init__.py": [
+    1590343286.95366,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/similarity/abstract.py": [
+    1590342521.9526281,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/similarity/cosine.py": [
+    1590342521.9526281,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/get_drunk_telegram_bot/utils/utils.py": [
+    1590345863.6440809,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/scripts/cocktails_preprocessing.py": [
+    1590345863.54808,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/scripts/load_inshaker.py": [
+    1590345863.1320748,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/scripts/tfidf_feature_train.py": [
+    1590345863.5440798,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/setup.py": [
+    1590342521.956628,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/__init__.py": [
+    1590343393.242915,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/test_db.py": [
+    1590346120.5831144,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/test_handler.py": [
+    1590346137.7113166,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/test_server.py": [
+    1590346147.7794356,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/unit/__init__.py": [
+    1590342521.956628,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/unit/test_cosine.py": [
+    1590345863.56008,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/unit/test_predictor.py": [
+    1590345863.56008,
+    []
+  ],
+  "/home/myavorskaya/Documents/getdrunk-telegram-bot/tests/utils.py": [
+    1590345863.6240807,
+    []
+  ]
+}

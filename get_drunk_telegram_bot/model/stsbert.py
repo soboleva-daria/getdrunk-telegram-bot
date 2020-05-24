@@ -13,6 +13,7 @@ class STSBertCocktailModel(IModel):
     STSBertCocktailModel performs cocktail recipe search by finding
     the most similar cocktail recipe using pretrained similarity Bert model.
     """
+
     def __init__(self, train: RawDataset):
         super().__init__()
         self.train = train
@@ -26,6 +27,10 @@ class STSBertCocktailModel(IModel):
         return np.array(predictions).argmax()
 
     def predict(query: str) -> List[Cocktail]:
-        params = {'ingredients': None, 'recipe': None, 'image': None,
-                  'useful_info': None}
+        params = {
+            'ingredients': None,
+            'recipe': None,
+            'image': None,
+            'useful_info': None,
+        }
         return Cocktail(*params)
