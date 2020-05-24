@@ -30,10 +30,10 @@ def test_recipe():
     correct_response = """
         Pina Colada 🍍 🥃
 
-        Ingredients: 3 cl rum, 3 cl coconut cream, 9 cl pineapple juice
+        Ingredients: Rum 3 cl, Coconut cream 3 cl, Pineapple juice 9 cl
 
-        Method: Mixed with crushed ice in blender until smooth,\
- then pour into a chilled glass, garnish and serve.
+        Method: 1. Mixed with crushed ice in blender until smooth.
+        2. Pour into a chilled glass, garnish and serve.
 
         Enjoy! 💫
     """

@@ -6,3 +6,4 @@ pytest-pep8
 torch
 pytorch_pretrained_bert
 semantic_text_similarity
+scikit-learn=0.22.1

@@ -15,58 +15,73 @@ class Cocktail:
         abv: Optional[float] = None,
         volume: Optional[float] = None,
     ):
-        self.__name = name
-        self.__characteristics = characteristics
-        self.__ingredients = ingredients
-        self.__tools = tools
-        self.__recipe = recipe
-        self.__image = image
-        self.__useful_info = useful_info
-        self.__abv = abv
-        self.__volume = volume
+        self._name = name
+        self._characteristics = characteristics
+        self._ingredients = ingredients
+        self._tools = tools
+        self._recipe = recipe
+        self._image = image
+        self._useful_info = useful_info
+        self._abv = abv or 0.0
+        self._volume = volume or 1.0
 
     def __repr__(self):
         return f"""
-        {self.__name}
-        characteristics: {self.__characteristics}
-        ingredients: {self.__ingredients}
-        tools: {self.__tools}
-        recipe: {self.__recipe}
-        abv: {self.__abv}
-        volume: {self.__volume}
+        {self._name}
+        characteristics: {self._characteristics}
+        ingredients: {self._ingredients}
+        tools: {self._tools}
+        recipe: {self._recipe}
+        abv: {self._abv}
+        volume: {self._volume}
         """
 
     @property
     def name(self):
-        return copy(self.__name)
+        return copy(self._name)
 
     @property
     def ingredients(self):
-        return copy(self.__ingredients)
+        return copy(self._ingredients)
+
+    @property
+    def abv(self):
+        return copy(self._abv)
+
+    @property
+    def volume(self):
+        return copy(self._volume)
+
+    @property
+    def useful_info(self):
+        return copy(self._useful_info)
 
     @ingredients.setter
     def ingredients(self, ingredients):
-        self.__ingredients = copy(ingredients)
+        self._ingredients = copy(ingredients)
 
     @property
     def image(self):
-        return deepcopy(self.__image)
+        return deepcopy(self._image)
 
     @image.setter
     def image(self, image):
-        self.__image = deepcopy(image)
+        self._image = deepcopy(image)
 
     @property
     def ingredients_str(self):
-        return ' '.join(map(lambda x: x['name'].lower(), self.__ingredients))
+        return ' '.join(map(lambda x: x['name'].lower(), self._ingredients))
 
     @property
     def recipe(self) -> str:
-        return '\n'.join([f'{i}. {step}' for i, step in enumerate(self.__recipe, 1)])
+        try:
+            return '\n'.join([f'{i}. {step}' for i, step in enumerate(self._recipe, 1)])
+        except TypeError:
+            return ''
 
     @property
     def pretty_ingredients(self) -> List[str]:
         return [
             f"{ingredient['name']} {ingredient['amount']} {ingredient['unit']}"
-            for ingredient in self.__ingredients
+            for ingredient in self._ingredients
         ]

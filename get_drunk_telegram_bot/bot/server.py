@@ -4,10 +4,13 @@ import pickle
 import random
 from datetime import datetime
 from string import punctuation
+from typing import List
 
+import numpy as np
 import pandas as pd
 import requests
 from flask import Flask, request
+from lazy import lazy
 from pkg_resources import Requirement, resource_filename
 
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
@@ -204,7 +207,7 @@ class GetDrunkBotHandler(TelegramInterface):
     # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?  # noqa
     def __init__(
         self,
-        model_name='TFIdfCocktailModel',
+        model_name='BaseModel',
         train=None,
         model_config_file=None,
         model_vocab_file=None,
@@ -218,12 +221,11 @@ class GetDrunkBotHandler(TelegramInterface):
         self.model_config_file = model_config_file
         self.model_vocab_file = model_vocab_file
         self.model = None
+        self.dataset = Dataset()
         self._create_model()
 
         # TODO: use custom db path here
         self.db = ServerDataBase(save_path='./db.json')
-
-        self.recipes_of_the_day = self.load_recipes_of_the_day()
 
         # index of the cocktail in recipe of the day list, refactor here
         self.index = None
@@ -232,7 +234,6 @@ class GetDrunkBotHandler(TelegramInterface):
         self._create_model()
 
     def _create_model(self):
-        dataset = Dataset()
         similarity = CosineSimilarity()
         if self.model_name == 'BaseModel':
             self.model = BaseModel()
@@ -240,7 +241,7 @@ class GetDrunkBotHandler(TelegramInterface):
             embeder = TfidfEmbeder()
             self.model = EmbederModel(
                 embeder=embeder,
-                dataset=dataset,
+                dataset=self.dataset,
                 similarity=similarity,
                 min_similarity=_EMBEDER_MIN_SIMILARITY,
             )
@@ -248,7 +249,7 @@ class GetDrunkBotHandler(TelegramInterface):
             embeder = BertEmbeder()
             self.model = EmbederModel(
                 embeder=embeder,
-                dataset=dataset,
+                dataset=self.dataset,
                 similarity=similarity,
                 min_similarity=_EMBEDER_MIN_SIMILARITY,
             )
@@ -433,7 +434,7 @@ class GetDrunkBotHandler(TelegramInterface):
 
             {cocktail.name}
 
-            Ingredients: {', '.join(cocktail.ingredients).strip()}
+            Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
 
             Method: {cocktail.recipe}
 
@@ -509,9 +510,15 @@ class GetDrunkBotHandler(TelegramInterface):
         except ValueError:
             return []
 
+    @lazy
+    def recipes_of_the_day(self, recipes_num: int = 5) -> List[Cocktail]:
+        indexes = np.arange(len(self.dataset))
+        np.random.shuffle(indexes)
+        return self.dataset.get_coctails_by_ids(indexes[:5])
+
     # TODO: put this method into drinks/preprocessing later?
     @staticmethod
-    def load_recipes_of_the_day():
+    def nooooo_load_recipes_of_the_day():
         """
         Load information about recipes of the day
         (local 05-CocktailRecipes.csv table).

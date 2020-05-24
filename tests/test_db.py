@@ -1,6 +1,5 @@
-from tests.utils import get_handler, run_test_request, tmp_dir
-
 from get_drunk_telegram_bot.bot.server import ServerDataBase
+from tests.utils import get_handler, run_test_request, tmp_dir
 
 
 def test_db_complex_scenario(tmp_dir):

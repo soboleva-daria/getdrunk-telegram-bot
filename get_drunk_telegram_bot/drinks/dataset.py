@@ -16,6 +16,9 @@ class Dataset:
             i: Cocktail(**coctail_info) for i, coctail_info in enumerate(coctails_info)
         }
 
+    def __len__(self):
+        return len(self.__coctails)
+
     def __preprocess_coctail_info(self, coctail_info: Dict) -> Dict:
         return {k.lower(): i for k, i in coctail_info.items() if k != 'id'}
 

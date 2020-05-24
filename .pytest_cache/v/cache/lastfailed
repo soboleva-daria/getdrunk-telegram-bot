@@ -1,13 +1,3 @@
 {
-  "get_drunk_telegram_bot/embeder/bert.py": true,
-  "tests/test_db.py::test_db_complex_scenario": true,
-  "tests/test_handler.py::test_end": true,
-  "tests/test_handler.py::test_info": true,
-  "tests/test_handler.py::test_intoxication_level": true,
-  "tests/test_handler.py::test_menu": true,
-  "tests/test_handler.py::test_recipe": true,
-  "tests/test_handler.py::test_recipe_of_the_day": true,
-  "tests/test_handler.py::test_start": true,
-  "tests/test_server.py::test_server_responses": true,
-  "tests/unit/test_cosine.py::CosineSimilarityTest": true
+  "tests/test_server.py::test_server_responses": true
 }

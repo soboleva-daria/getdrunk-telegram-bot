@@ -18,8 +18,8 @@ class BaseModel(IModel):
         {'name': 'Shaker', 'amount': '1', 'unit': 'piece'},
     ]
     RECIPE = [
-        'Mixed with crushed ice in blender until smooth',
-        'pour into a chilled glass, garnish and serve.',
+        'Mixed with crushed ice in blender until smooth.',
+        'Pour into a chilled glass, garnish and serve.',
     ]
     IMG = None
     USEFUL_INFO = (
