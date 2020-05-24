@@ -5,6 +5,8 @@ import random
 from datetime import datetime
 from string import punctuation
 from typing import List
+from PIL import Image
+from io import BytesIO
 
 import numpy as np
 import pandas as pd
@@ -62,12 +64,14 @@ class TelegramInterface:
         data = {'url': hook_url}
         requests.post(url, data=data)
 
-    def _send_photo(self, chat_id, text, photo_path):
+    def _send_photo(self, image):
         method = 'sendPhoto'
         url = f'{self._bot_url}/{method}'
         data = {'chat_id': chat_id, 'caption': text}
-        with open(photo_path, 'rb') as image_file:
-            requests.post(url, data=data, files={'photo': image_file})
+        byte_io = BytesIO()
+        image.save(byte_io, 'png')
+        byte_io.seek(0)
+        requests.post(url, data=data, files={'photo': byte_io})
 
     def _send_message(self, chat_id, text):
         method = 'sendMessage'
@@ -207,7 +211,7 @@ class GetDrunkBotHandler(TelegramInterface):
     # TODO: user should have an opportunity to provide bac in the begnning and maybe weight?  # noqa
     def __init__(
         self,
-        model_name='BaseModel',
+        model_name='TFIdfCocktailModel',
         train=None,
         model_config_file=None,
         model_vocab_file=None,
@@ -369,7 +373,7 @@ class GetDrunkBotHandler(TelegramInterface):
             """
             )
             self._send_photo(
-                chat_id, msg, photo_path=get_file(f'{cocktail.orig_name}.png')
+                cocktail.image
             )
 
     def _send_intoxication_degree(self, chat_id):

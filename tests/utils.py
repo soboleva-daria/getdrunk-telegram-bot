@@ -63,7 +63,7 @@ def make_message_from_text(text):
 
 def get_handler():
     with TelegramInterfaceMocker():
-        return GetDrunkBotHandler()
+        return GetDrunkBotHandler(model_name='BaseModel')
 
 
 def run_test_request(handler, text, control_normalization=True):

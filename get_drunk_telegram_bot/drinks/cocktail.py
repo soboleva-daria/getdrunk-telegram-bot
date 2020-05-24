@@ -1,5 +1,9 @@
 from copy import copy, deepcopy
 from typing import Dict, List, Optional
+from PIL import Image
+import requests
+
+from lazy import lazy
 
 
 class Cocktail:
@@ -60,13 +64,13 @@ class Cocktail:
     def ingredients(self, ingredients):
         self._ingredients = copy(ingredients)
 
-    @property
+    @lazy
     def image(self):
-        return deepcopy(self._image)
-
-    @image.setter
-    def image(self, image):
-        self._image = deepcopy(image)
+        if self._image:
+            response = requests.get(self._image)
+            image = Image.open(response.raw)
+            return image
+        return None
 
     @property
     def ingredients_str(self):
