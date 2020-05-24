@@ -55,11 +55,18 @@ class Cocktail:
 
     @property
     def volume(self):
-        return copy(self._volume)
+        return copy(self._volume)        
 
     @property
     def useful_info(self):
-        return copy(self._useful_info)
+        info = []
+        if self._useful_info is not None:
+            info.append(copy(self._useful_info))
+        if self._characteristics is not None:
+            info.append(f"\nCharacteristics: {', '.join(self._characteristics)}")
+        if len(info) != 0:
+            return '\n'.join(info)
+        return None
 
     @ingredients.setter
     def ingredients(self, ingredients):

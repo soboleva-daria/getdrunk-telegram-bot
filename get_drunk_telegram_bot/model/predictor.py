@@ -13,11 +13,13 @@ class EmbederModel(IModel):
         embeder: IEmbeder,
         dataset: Dataset,
         similarity: ISimilarity = CosineSimilarity(),
+        max_similarity: Optional[float] = None,
         min_similarity: Optional[float] = None,
     ):
         self.__embeder = embeder
         self.__dataset = dataset
         self.__similarity = similarity
+        self.__max_similarity = max_similarity
         self.__min_similarity = min_similarity
         self.__candidate_vectors = self.__embeder.embed(dataset.get_ingredients())
 
@@ -27,11 +29,17 @@ class EmbederModel(IModel):
             question_embedding, self.__candidate_vectors
         )
 
-        if self.__min_similarity is None:
-            coctails_ids = ranks
-        else:
+        coctails_ids = []
+
+        if self.__max_similarity is not None:
+            coctails_ids = [
+                rank for rank in ranks if similarities[rank] > self.__max_similarity
+            ]
+        if len(coctails_ids) == 0 and self.__min_similarity is not None:
             coctails_ids = [
                 rank for rank in ranks if similarities[rank] > self.__min_similarity
             ]
+        if len(coctails_ids) == 0 and self.__max_similarity is None and self.__min_similarity is None:
+            coctails_ids = ranks            
 
         return self.__dataset.get_coctails_by_ids(coctails_ids)

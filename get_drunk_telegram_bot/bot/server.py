@@ -26,7 +26,8 @@ from get_drunk_telegram_bot.utils.utils import (
     normalize_text,
 )
 
-_EMBEDER_MIN_SIMILARITY = 0.75
+_EMBEDER_MAX_SIMILARITY = 0.79
+_EMBEDER_MIN_SIMILARITY = 0.15
 
 
 def get_file(filename):
@@ -64,7 +65,7 @@ class TelegramInterface:
         data = {'url': hook_url}
         requests.post(url, data=data)
 
-    def _send_photo(self, image):
+    def _send_photo(self, chat_id, text, image):
         method = 'sendPhoto'
         url = f'{self._bot_url}/{method}'
         data = {'chat_id': chat_id, 'caption': text}
@@ -247,6 +248,7 @@ class GetDrunkBotHandler(TelegramInterface):
                 embeder=embeder,
                 dataset=self.dataset,
                 similarity=similarity,
+                max_similarity=_EMBEDER_MAX_SIMILARITY,
                 min_similarity=_EMBEDER_MIN_SIMILARITY,
             )
         elif self.model_name == 'BertCocktailModel':
@@ -255,6 +257,7 @@ class GetDrunkBotHandler(TelegramInterface):
                 embeder=embeder,
                 dataset=self.dataset,
                 similarity=similarity,
+                max_similarity=_EMBEDER_MAX_SIMILARITY,
                 min_similarity=_EMBEDER_MIN_SIMILARITY,
             )
         else:
@@ -340,21 +343,28 @@ class GetDrunkBotHandler(TelegramInterface):
     def _send_best_cocktail_with_ingredients(self, chat_id, ingredients):
         if self.debug:
             print('Model predict starts.')
-        cocktail = random.choice(self.model.predict(' '.join(ingredients)))
+        best_cocktails = self.model.predict(' '.join(ingredients))
+        if len(best_cocktails) == 0:
+            msg = (
+                "Oops 😭 We couldn't find cocktail for you\n"
+                "Let's try again, just say \\recipe!"
+            )
+        else:
+            cocktail = random.choice(best_cocktails)
 
-        msg = normalize_text(
-            f"""
-            { cocktail.name }
+            msg = normalize_text(
+                f"""
+                { cocktail.name }
 
-            Ingredients: { ', '.join(cocktail.pretty_ingredients).strip() }
+                Ingredients: { ', '.join(cocktail.pretty_ingredients).strip() }
 
-            Method: { cocktail.recipe }
+                Method: { cocktail.recipe }
 
-            Enjoy! 💫
-        """
-        )
+                Enjoy! 💫
+            """
+            )
 
-        self.db.update(chat_id, cocktail)
+            self.db.update(chat_id, cocktail)
 
         self._send_message(chat_id, msg)
 
@@ -379,7 +389,7 @@ class GetDrunkBotHandler(TelegramInterface):
             """
             )
             self._send_photo(
-                cocktail.image
+                chat_id, msg, cocktail.image
             )
 
     def _send_intoxication_degree(self, chat_id):
@@ -422,6 +432,11 @@ class GetDrunkBotHandler(TelegramInterface):
         if cocktail is None:
             msg = (
                 "Oh 🤗 looks like you didn't select the cocktail. "
+                "Let's try again, just say \\recipe!"
+            )
+        if cocktail.useful_info is None:
+            msg = (
+                "Oh 🤗 looks like we don't have information about this cocktail. "
                 "Let's try again, just say \\recipe!"
             )
         else:
