@@ -1,7 +1,6 @@
 import pytest
 
 from get_drunk_telegram_bot.similarity import CosineSimilarity
-from tests.chitchat.unit.chatterix.similarity.vector_case import VectorSimilarityTestCase
 
 
 class CosineSimilarityTest(VectorSimilarityTestCase):
