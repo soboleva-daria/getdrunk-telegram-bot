@@ -5,8 +5,8 @@ from get_drunk_telegram_bot.drinks.cocktail import Cocktail
 
 
 def decode_json(dct):
-    if "__cocktail__" in dct:
-        dct.pop("__cocktail__", None)
+    if '__cocktail__' in dct:
+        dct.pop('__cocktail__', None)
         return Cocktail(**dct)
     elif isinstance(dct, dict):
         result = {}

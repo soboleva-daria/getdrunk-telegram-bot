@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from pytest import fixture
 
 from get_drunk_telegram_bot.bot.server import GetDrunkBotHandler, create_server
@@ -9,7 +10,7 @@ class FakeInterface:
         pass
 
     def _set_web_hook(self, *args, **kwargs):
-        return "oops"
+        return 'oops'
 
     def _send_photo(self, chat_id, text, photo_path):
         self.saved_text = text
@@ -22,8 +23,7 @@ class FakeInterface:
 class TelegramInterfaceMocker:
     def __init__(self):
         self.patcher = patch.object(
-            GetDrunkBotHandler,
-            '__bases__', (FakeInterface,)
+            GetDrunkBotHandler, '__bases__', (FakeInterface,)
         )  # Dark magic is here :)
 
     def __enter__(self):
@@ -58,22 +58,17 @@ class FakeArgs:
 
 
 def make_message_from_text(text):
-    return {
-        'message': {
-            'chat': {'id': ""},
-            'text': text
-        }
-    }
+    return {'message': {'chat': {'id': ''}, 'text': text}}
 
 
 def get_handler():
     with TelegramInterfaceMocker():
-        return GetDrunkBotHandler()
+        return GetDrunkBotHandler(model_name='BaseModel')
 
 
 def run_test_request(handler, text, control_normalization=True):
     with TelegramInterfaceMocker():
-        handler.process_message("", text)
+        handler.process_message('', text)
 
         text = getattr(handler, 'saved_text', None)
         im_path = getattr(handler, 'saved_photo_path', None)
@@ -81,8 +76,7 @@ def run_test_request(handler, text, control_normalization=True):
         # Maybe some assert here (common for all requests)
         if control_normalization:
             assert canonical_normalization(text) == text, (
-                "No indents in response."
-                "Use GetDrunkBotHandler.normalize_text(text)."
+                'No indents in response.' 'Use GetDrunkBotHandler.normalize_text(text).'
             )
 
         return (text, im_path)

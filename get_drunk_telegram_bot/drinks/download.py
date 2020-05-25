@@ -7,6 +7,7 @@ class SimpleDownloader:
     Below you can find specific downloaders for any
     specific part needed for training.
     """
+
     def __init__(self):
         pass
 
