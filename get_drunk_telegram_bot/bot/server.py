@@ -434,7 +434,7 @@ class GetDrunkBotHandler(TelegramInterface):
                 "Oh 🤗 looks like you didn't select the cocktail. "
                 "Let's try again, just say \\recipe!"
             )
-        if cocktail.useful_info is None:
+        elif cocktail.useful_info is None:
             msg = (
                 "Oh 🤗 looks like we don't have information about this cocktail. "
                 "Let's try again, just say \\recipe!"

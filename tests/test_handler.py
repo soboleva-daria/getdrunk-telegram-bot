@@ -99,7 +99,9 @@ def test_info():
 
     correct_response2 = """
          Pina Colada 🍍 🥃 was officially invented on August 15 1954\
- by a bartender named Ramón “Monchito” Marrero! 🔬
+ by a bartender named Ramón “Monchito” Marrero
+
+    Characteristics: sweet! 🔬
     """
     response2, _ = run_test_request(handler, '\\info')
     correct_response2 = '\n'.join(
