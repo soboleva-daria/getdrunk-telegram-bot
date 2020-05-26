@@ -126,7 +126,7 @@ def test_recipe_of_the_day():
 def test_explore():
     handler = get_handler('TFIdfCocktailModel')
     _, _ = run_test_request(handler, '\\start')
-    response, _ = run_test_request(handler, '\\explore Cuba Libre')
+    response, _ = run_test_request(handler, '\\explore Pina Colada')
     assert 'similar to' in response
     response, _ = run_test_request(handler, '\\explore rum, juice')
     assert 'with these ingredients' in response
