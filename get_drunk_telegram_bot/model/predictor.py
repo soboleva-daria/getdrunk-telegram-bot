@@ -23,7 +23,7 @@ class EmbederModel(IModel):
         self.__min_similarity = min_similarity
         self.__candidate_vectors = self.__embeder.embed(dataset.get_ingredients())
 
-    def predict(self, query: str) -> List[Cocktail]:
+    def predict(self, query: str, ignore_max_similarity=False) -> List[Cocktail]:
         question_embedding = self.__embeder.embed([query])[0]
         similarities, ranks = self.__similarity.rank(
             question_embedding, self.__candidate_vectors

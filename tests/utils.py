@@ -61,9 +61,9 @@ def make_message_from_text(text):
     return {'message': {'chat': {'id': ''}, 'text': text}}
 
 
-def get_handler():
+def get_handler(model_name='BaseModel'):
     with TelegramInterfaceMocker():
-        return GetDrunkBotHandler(model_name='BaseModel')
+        return GetDrunkBotHandler(model_name=model_name)
 
 
 def run_test_request(handler, text, control_normalization=True):

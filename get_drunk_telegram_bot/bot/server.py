@@ -7,6 +7,7 @@ from string import punctuation
 from typing import List
 from PIL import Image
 from io import BytesIO
+import difflib
 
 import numpy as np
 import pandas as pd
@@ -27,7 +28,8 @@ from get_drunk_telegram_bot.utils.utils import (
 )
 
 _EMBEDER_MAX_SIMILARITY = 0.79
-_EMBEDER_MIN_SIMILARITY = 0.15
+_EMBEDER_MIN_SIMILARITY = 0.3
+_EXPLORE_COCKTAILS_NUM = 3
 
 
 def get_file(filename):
@@ -304,8 +306,7 @@ class GetDrunkBotHandler(TelegramInterface):
             self._send_cocktails_menu(chat_id)
 
         elif '\\explore' in msg:
-            ingredients = self.parse_ingredients(msg)
-            self._send_exploration_result(chat_id, ingredients)
+            self._send_exploration_result(chat_id, msg)
         else:
             self._send_help_message(chat_id)
 
@@ -499,8 +500,55 @@ class GetDrunkBotHandler(TelegramInterface):
 
         self._send_message(chat_id, msg)
 
-    def _send_exploration_result(self, chat_id, ingredients):
-        pass
+    def _send_exploration_result(self, chat_id, text):
+        start_position = text.index('\\explore') + len('\\explore')
+
+        query = text[start_position:].strip().lower().split()
+        query = ' '.join(query)
+
+        right_ingredients = None
+        right_cocktail_name = None
+
+        max_ratio = 0.9
+        for cocktail_name, ingredients in self.dataset.get_names_and_ingredients():
+            ratio = difflib.SequenceMatcher(a=query, b=cocktail_name.lower()).ratio()
+            if ratio > max_ratio:
+                right_ingredients = ingredients
+                right_cocktail_name = cocktail_name
+                max_ratio = ratio
+
+        if right_ingredients:
+            predictions = self.model.predict(right_ingredients, True)
+            cocktails = np.random.choice(predictions[1:],
+                                         min(_EXPLORE_COCKTAILS_NUM, len(predictions[1:])),
+                                         replace=False)
+
+            cocktails_msg = '\n'.join([f"""{cocktail.name}
+
+                        Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
+
+                        Method: {cocktail.recipe}
+                        """ for cocktail in cocktails])
+
+            msg = normalize_text(
+                f""" Some cocktails similar to {right_cocktail_name}:""" + "\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
+
+        else:
+            predictions = self.model.predict(query)
+            if len(predictions) > 0:
+                cocktails = np.random.choice(predictions, min(3, len(predictions)), replace=False)
+                cocktails_msg = '\n'.join([f"""{cocktail.name}
+
+                        Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
+
+                        Method: {cocktail.recipe}
+                        """ for cocktail in cocktails])
+
+                msg = normalize_text("Some cocktails with these ingredients:\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
+            else:
+                msg = normalize_text("Sorry, I don't know similar cocktails:(")
+
+        self._send_message(chat_id, msg)
 
     # TODO: do we need these methods?
     # def ask_for_cocktail_ingredients(self):
