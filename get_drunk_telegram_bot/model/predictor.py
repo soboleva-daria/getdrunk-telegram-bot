@@ -31,7 +31,7 @@ class EmbederModel(IModel):
 
         coctails_ids = []
 
-        if self.__max_similarity is not None:
+        if self.__max_similarity is not None and not ignore_max_similarity:
             coctails_ids = [
                 rank for rank in ranks if similarities[rank] > self.__max_similarity
             ]

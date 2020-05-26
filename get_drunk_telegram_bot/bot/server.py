@@ -536,7 +536,7 @@ class GetDrunkBotHandler(TelegramInterface):
         else:
             predictions = self.model.predict(query)
             if len(predictions) > 0:
-                cocktails = np.random.choice(predictions, min(3, len(predictions)), replace=False)
+                cocktails = np.random.choice(predictions, min(_EXPLORE_COCKTAILS_NUM, len(predictions)), replace=False)
                 cocktails_msg = '\n'.join([f"""{cocktail.name}
 
                         Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
