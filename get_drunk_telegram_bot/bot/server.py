@@ -8,6 +8,7 @@ from typing import List
 from PIL import Image
 from io import BytesIO
 import difflib
+import logging
 
 import numpy as np
 import pandas as pd
@@ -30,6 +31,8 @@ from get_drunk_telegram_bot.utils.utils import (
 _EMBEDER_MAX_SIMILARITY = 0.79
 _EMBEDER_MIN_SIMILARITY = 0.3
 _EXPLORE_COCKTAILS_NUM = 3
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
 def get_file(filename):
@@ -281,33 +284,43 @@ class GetDrunkBotHandler(TelegramInterface):
             print('Got a message: <%s>.' % msg)
 
         if msg == '\\start'.strip():
+            logging.info(f'Start chat with id={chat_id}')
             self._start_session_and_say_hello(chat_id)
 
         elif msg == '\\end':
+            logging.info(f'End chat with id={chat_id}')
             self._end_session_and_say_bye(chat_id)
 
         elif msg == '\\recipe of the day':
+            logging.info(f'Give recipe of the day for chat with id={chat_id}')
             self._send_day_cocktail(chat_id)
 
         elif '\\recipe' in msg:
+            logging.info(f'Give recipe for chat with id={chat_id}')
             ingredients = self.parse_ingredients(msg)
             self._send_best_cocktail_with_ingredients(chat_id, ingredients)
 
         elif msg == '\\photo':
+            logging.info(f'Give photo for chat with id={chat_id}')
             self._send_cocktail_image(chat_id, self.db.get_cocktail(chat_id))
 
         elif msg == '\\intoxication level':
+            logging.info(f'Give intoxication level for chat with id={chat_id}')
             self._send_intoxication_degree(chat_id)
 
         elif msg == '\\info':
+            logging.info(f'Give info for chat with id={chat_id}')
             self._send_cocktail_useful_info(chat_id, self.db.get_cocktail(chat_id))
 
         elif msg == '\\menu':
+            logging.info(f'Give menu for chat with id={chat_id}')
             self._send_cocktails_menu(chat_id)
 
         elif '\\explore' in msg:
+            logging.info(f'Explore for chat with id={chat_id}')
             self._send_exploration_result(chat_id, msg)
         else:
+            logging.info(f'Help to chat with id={chat_id}')
             self._send_help_message(chat_id)
 
     def _start_session_and_say_hello(self, chat_id):
@@ -546,9 +559,9 @@ class GetDrunkBotHandler(TelegramInterface):
 
                 msg = normalize_text("Some cocktails with these ingredients:\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
             else:
-                msg = ("Sorry, I don't know similar cocktails:( "
-                       "Please try to type something like \explore rum, lemon or \explore Pina Colada "
-                       "and and I will find similary cocktails for you ❤️")
+                msg = ("Sorry, I don't know similar cocktails 🥺\n"
+                       "Please try to type something like '\explore rum, lemon' or '\explore Pina Colada' "
+                       "and I will find similary cocktails for you ❤️")
                 msg = normalize_text(msg)
 
         self._send_message(chat_id, msg)
@@ -664,8 +677,16 @@ def create_server(args):
         if request.method == 'POST':
             # data format may differ
             data = request.get_json(force=True)
-            chat_id = data['message']['chat']['id']
-            text = data['message']['text']
+
+            logging.info(f'Got request:\n{data}\n')
+
+            if 'message' in data:
+                chat_id = data['message']['chat']['id']
+                text = data['message']['text']
+            else:
+                chat_id = data['edited_message']['chat']['id']
+                text = data['edited_message']['text']
+
             get_drunk_bot.process_message(chat_id, text)
         else:
             return 'Hello, world!'
