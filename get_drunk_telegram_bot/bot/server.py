@@ -14,7 +14,6 @@ import pandas as pd
 import requests
 from flask import Flask, request
 from lazy import lazy
-from PIL import Image
 from pkg_resources import Requirement, resource_filename
 
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
@@ -22,11 +21,7 @@ from get_drunk_telegram_bot.drinks.dataset import Dataset
 from get_drunk_telegram_bot.embeder import BertEmbeder, TfidfEmbeder
 from get_drunk_telegram_bot.model import BaseModel, EmbederModel
 from get_drunk_telegram_bot.similarity import CosineSimilarity
-from get_drunk_telegram_bot.utils.utils import (
-    decode_json,
-    encode_json,
-    normalize_text,
-)
+from get_drunk_telegram_bot.utils.utils import decode_json, encode_json, normalize_text
 
 _EMBEDER_MAX_SIMILARITY = 0.79
 _EMBEDER_MIN_SIMILARITY = 0.3
@@ -585,7 +580,7 @@ class GetDrunkBotHandler(TelegramInterface):
             else:
                 msg = (
                     "Sorry, I don't know similar cocktails 🥺\n"
-                    "Please try to type something like '\explore rum, lemon' or '\explore Pina Colada' "
+                    "Please try to type something like '\\explore rum, lemon' or '\\explore Pina Colada' "
                     'and I will find similary cocktails for you ❤️'
                 )
                 msg = normalize_text(msg)

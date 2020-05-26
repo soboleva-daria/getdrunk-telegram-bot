@@ -1,4 +1,4 @@
-from copy import copy, deepcopy
+from copy import copy
 from io import BytesIO
 from typing import Dict, List, Optional
 

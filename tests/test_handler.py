@@ -1,4 +1,4 @@
-from tests.utils import get_handler, run_test_request, tmp_dir
+from tests.utils import get_handler, run_test_request
 
 
 def test_start():

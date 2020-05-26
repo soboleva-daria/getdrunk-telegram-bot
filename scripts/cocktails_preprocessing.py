@@ -1,5 +1,4 @@
 import json
-from collections import Counter
 
 oz = 29.5735
 default_liqueur_degree = 0.18

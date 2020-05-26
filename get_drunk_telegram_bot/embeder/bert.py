@@ -4,8 +4,6 @@ import numpy as np
 import torch
 from pytorch_pretrained_bert import BertModel, BertTokenizer
 
-from get_drunk_telegram_bot.drinks.cocktail import Cocktail
-from get_drunk_telegram_bot.drinks.preprocessing import RawDataset
 from get_drunk_telegram_bot.embeder import IEmbeder
 
 
@@ -40,7 +38,7 @@ class BertEmbeder(IEmbeder):
             tokens_tensor = torch.tensor(
                 [
                     self.encode(self.tokenize(text))
-                    for text in data[i : i + self.batch_size]
+                    for text in data[i:i + self.batch_size]
                 ]
             )
             with torch.no_grad():
