@@ -509,7 +509,7 @@ class GetDrunkBotHandler(TelegramInterface):
         right_ingredients = None
         right_cocktail_name = None
 
-        max_ratio = 0.9
+        max_ratio = 0.8
         for cocktail_name, ingredients in self.dataset.get_names_and_ingredients():
             ratio = difflib.SequenceMatcher(a=query, b=cocktail_name.lower()).ratio()
             if ratio > max_ratio:
