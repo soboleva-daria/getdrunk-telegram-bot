@@ -7,6 +7,7 @@ from string import punctuation
 from typing import List
 from PIL import Image
 from io import BytesIO
+import difflib
 
 import numpy as np
 import pandas as pd
@@ -27,7 +28,8 @@ from get_drunk_telegram_bot.utils.utils import (
 )
 
 _EMBEDER_MAX_SIMILARITY = 0.79
-_EMBEDER_MIN_SIMILARITY = 0.15
+_EMBEDER_MIN_SIMILARITY = 0.3
+_EXPLORE_COCKTAILS_NUM = 3
 
 
 def get_file(filename):
@@ -304,8 +306,7 @@ class GetDrunkBotHandler(TelegramInterface):
             self._send_cocktails_menu(chat_id)
 
         elif '\\explore' in msg:
-            ingredients = self.parse_ingredients(msg)
-            self._send_exploration_result(chat_id, ingredients)
+            self._send_exploration_result(chat_id, msg)
         else:
             self._send_help_message(chat_id)
 
@@ -434,7 +435,7 @@ class GetDrunkBotHandler(TelegramInterface):
                 "Oh 🤗 looks like you didn't select the cocktail. "
                 "Let's try again, just say \\recipe!"
             )
-        if cocktail.useful_info is None:
+        elif cocktail.useful_info is None:
             msg = (
                 "Oh 🤗 looks like we don't have information about this cocktail. "
                 "Let's try again, just say \\recipe!"
@@ -499,27 +500,58 @@ class GetDrunkBotHandler(TelegramInterface):
 
         self._send_message(chat_id, msg)
 
-    def _send_exploration_result(self, chat_id, ingredients):
-        pass
+    def _send_exploration_result(self, chat_id, text):
+        start_position = text.index('\\explore') + len('\\explore')
 
-    # TODO: do we need these methods?
-    # def ask_for_cocktail_ingredients(self):
-    #     pass
+        query = text[start_position:].strip().lower().split()
+        query = ' '.join(query)
 
-    # def ask_to_end_session_and_say_bye(self):
-    #     pass
+        right_ingredients = None
+        right_cocktail_name = None
 
-    # def ask_to_send_cocktail_recipe(self):
-    #     pass
+        max_ratio = 0.8
+        for cocktail_name, ingredients in self.dataset.get_names_and_ingredients():
+            ratio = difflib.SequenceMatcher(a=query, b=cocktail_name.lower()).ratio()
+            if ratio > max_ratio:
+                right_ingredients = ingredients
+                right_cocktail_name = cocktail_name
+                max_ratio = ratio
 
-    # def ask_to_send_cocktail_image(self):
-    #     pass
-    #
-    # def ask_to_send_cocktail_useful_info(self):
-    #     pass
+        if right_ingredients:
+            predictions = self.model.predict(right_ingredients, True)
+            cocktails = np.random.choice(predictions[1:],
+                                         min(_EXPLORE_COCKTAILS_NUM, len(predictions[1:])),
+                                         replace=False)
 
-    # def ask_to_send_day_recipe(self):
-    #     pass
+            cocktails_msg = '\n'.join([f"""{cocktail.name}
+
+                        Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
+
+                        Method: {cocktail.recipe}
+                        """ for cocktail in cocktails])
+
+            msg = normalize_text(
+                f""" Some cocktails similar to {right_cocktail_name}:""" + "\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
+
+        else:
+            predictions = self.model.predict(query)
+            if len(predictions) > 0:
+                cocktails = np.random.choice(predictions, min(_EXPLORE_COCKTAILS_NUM, len(predictions)), replace=False)
+                cocktails_msg = '\n'.join([f"""{cocktail.name}
+
+                        Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
+
+                        Method: {cocktail.recipe}
+                        """ for cocktail in cocktails])
+
+                msg = normalize_text("Some cocktails with these ingredients:\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
+            else:
+                msg = ("Sorry, I don't know similar cocktails:( "
+                       "Please try to type something like \explore rum, lemon or \explore Pina Colada "
+                       "and and I will find similary cocktails for you ❤️")
+                msg = normalize_text(msg)
+
+        self._send_message(chat_id, msg)
 
     @staticmethod
     def parse_ingredients(text):

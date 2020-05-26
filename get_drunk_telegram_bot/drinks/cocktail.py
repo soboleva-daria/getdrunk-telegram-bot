@@ -55,7 +55,7 @@ class Cocktail:
 
     @property
     def volume(self):
-        return copy(self._volume)        
+        return copy(self._volume)
 
     @property
     def useful_info(self):
