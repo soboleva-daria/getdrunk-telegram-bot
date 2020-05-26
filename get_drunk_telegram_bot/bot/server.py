@@ -546,28 +546,12 @@ class GetDrunkBotHandler(TelegramInterface):
 
                 msg = normalize_text("Some cocktails with these ingredients:\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
             else:
-                msg = normalize_text("Sorry, I don't know similar cocktails:(")
+                msg = ("Sorry, I don't know similar cocktails:( "
+                       "Please try to type something like \explore rum, lemon or \explore Pina Colada "
+                       "and and I will find similary cocktails for you ❤️")
+                msg = normalize_text(msg)
 
         self._send_message(chat_id, msg)
-
-    # TODO: do we need these methods?
-    # def ask_for_cocktail_ingredients(self):
-    #     pass
-
-    # def ask_to_end_session_and_say_bye(self):
-    #     pass
-
-    # def ask_to_send_cocktail_recipe(self):
-    #     pass
-
-    # def ask_to_send_cocktail_image(self):
-    #     pass
-    #
-    # def ask_to_send_cocktail_useful_info(self):
-    #     pass
-
-    # def ask_to_send_day_recipe(self):
-    #     pass
 
     @staticmethod
     def parse_ingredients(text):
