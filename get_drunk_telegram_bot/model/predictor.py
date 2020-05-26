@@ -39,7 +39,11 @@ class EmbederModel(IModel):
             coctails_ids = [
                 rank for rank in ranks if similarities[rank] > self.__min_similarity
             ]
-        if len(coctails_ids) == 0 and self.__max_similarity is None and self.__min_similarity is None:
+        if (
+            len(coctails_ids) == 0
+            and self.__max_similarity is None
+            and self.__min_similarity is None
+        ):
             coctails_ids = ranks
 
         return self.__dataset.get_coctails_by_ids(coctails_ids)

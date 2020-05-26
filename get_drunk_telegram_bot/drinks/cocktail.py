@@ -1,10 +1,10 @@
 from copy import copy, deepcopy
-from typing import Dict, List, Optional
-from PIL import Image
-import requests
 from io import BytesIO
+from typing import Dict, List, Optional
 
+import requests
 from lazy import lazy
+from PIL import Image
 
 
 class Cocktail:

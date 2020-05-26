@@ -26,7 +26,10 @@ class Dataset:
         return [coctail.ingredients_str for coctail in self.__coctails.values()]
 
     def get_names_and_ingredients(self) -> List[str]:
-        return [(coctail.name, coctail.ingredients_str) for coctail in self.__coctails.values()]
+        return [
+            (coctail.name, coctail.ingredients_str)
+            for coctail in self.__coctails.values()
+        ]
 
     def get_coctail_by_id(self, coctail_id: int) -> Optional[Cocktail]:
         try:

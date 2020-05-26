@@ -40,7 +40,7 @@ class BertEmbeder(IEmbeder):
             tokens_tensor = torch.tensor(
                 [
                     self.encode(self.tokenize(text))
-                    for text in data[i:i + self.batch_size]
+                    for text in data[i : i + self.batch_size]
                 ]
             )
             with torch.no_grad():

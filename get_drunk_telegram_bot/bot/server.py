@@ -1,20 +1,20 @@
+import difflib
 import json
+import logging
 import os
 import pickle
 import random
 from datetime import datetime
+from io import BytesIO
 from string import punctuation
 from typing import List
-from PIL import Image
-from io import BytesIO
-import difflib
-import logging
 
 import numpy as np
 import pandas as pd
 import requests
 from flask import Flask, request
 from lazy import lazy
+from PIL import Image
 from pkg_resources import Requirement, resource_filename
 
 from get_drunk_telegram_bot.drinks.cocktail import Cocktail
@@ -402,9 +402,7 @@ class GetDrunkBotHandler(TelegramInterface):
                 { cocktail.name }
             """
             )
-            self._send_photo(
-                chat_id, msg, cocktail.image
-            )
+            self._send_photo(chat_id, msg, cocktail.image)
 
     def _send_intoxication_degree(self, chat_id):
         cocktail_list = '\n'.join(
@@ -532,36 +530,64 @@ class GetDrunkBotHandler(TelegramInterface):
 
         if right_ingredients:
             predictions = self.model.predict(right_ingredients, True)
-            cocktails = np.random.choice(predictions[1:],
-                                         min(_EXPLORE_COCKTAILS_NUM, len(predictions[1:])),
-                                         replace=False)
+            cocktails = np.random.choice(
+                predictions[1:],
+                min(_EXPLORE_COCKTAILS_NUM, len(predictions[1:])),
+                replace=False,
+            )
 
-            cocktails_msg = '\n'.join([f"""{cocktail.name}
+            cocktails_msg = '\n'.join(
+                [
+                    f"""{cocktail.name}
 
                         Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
 
                         Method: {cocktail.recipe}
-                        """ for cocktail in cocktails])
+                        """
+                    for cocktail in cocktails
+                ]
+            )
 
             msg = normalize_text(
-                f""" Some cocktails similar to {right_cocktail_name}:""" + "\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
+                f""" Some cocktails similar to {right_cocktail_name}:"""
+                + '\n\n'
+                + cocktails_msg
+                + '\n'
+                + 'Enjoy! 💫'
+            )
 
         else:
             predictions = self.model.predict(query)
             if len(predictions) > 0:
-                cocktails = np.random.choice(predictions, min(_EXPLORE_COCKTAILS_NUM, len(predictions)), replace=False)
-                cocktails_msg = '\n'.join([f"""{cocktail.name}
+                cocktails = np.random.choice(
+                    predictions,
+                    min(_EXPLORE_COCKTAILS_NUM, len(predictions)),
+                    replace=False,
+                )
+                cocktails_msg = '\n'.join(
+                    [
+                        f"""{cocktail.name}
 
                         Ingredients: {', '.join(cocktail.pretty_ingredients).strip()}
 
                         Method: {cocktail.recipe}
-                        """ for cocktail in cocktails])
+                        """
+                        for cocktail in cocktails
+                    ]
+                )
 
-                msg = normalize_text("Some cocktails with these ingredients:\n\n" + cocktails_msg + "\n" + "Enjoy! 💫")
+                msg = normalize_text(
+                    'Some cocktails with these ingredients:\n\n'
+                    + cocktails_msg
+                    + '\n'
+                    + 'Enjoy! 💫'
+                )
             else:
-                msg = ("Sorry, I don't know similar cocktails 🥺\n"
-                       "Please try to type something like '\explore rum, lemon' or '\explore Pina Colada' "
-                       "and I will find similary cocktails for you ❤️")
+                msg = (
+                    "Sorry, I don't know similar cocktails 🥺\n"
+                    "Please try to type something like '\explore rum, lemon' or '\explore Pina Colada' "
+                    'and I will find similary cocktails for you ❤️'
+                )
                 msg = normalize_text(msg)
 
         self._send_message(chat_id, msg)
