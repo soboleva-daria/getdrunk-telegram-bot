@@ -23,7 +23,7 @@ class EmbederModel(IModel):
         self.__min_similarity = min_similarity
         self.__candidate_vectors = self.__embeder.embed(dataset.get_ingredients())
 
-    def predict(self, query: str) -> List[Cocktail]:
+    def predict(self, query: str, ignore_max_similarity=False) -> List[Cocktail]:
         question_embedding = self.__embeder.embed([query])[0]
         similarities, ranks = self.__similarity.rank(
             question_embedding, self.__candidate_vectors
@@ -31,7 +31,7 @@ class EmbederModel(IModel):
 
         coctails_ids = []
 
-        if self.__max_similarity is not None:
+        if self.__max_similarity is not None and not ignore_max_similarity:
             coctails_ids = [
                 rank for rank in ranks if similarities[rank] > self.__max_similarity
             ]
@@ -40,6 +40,6 @@ class EmbederModel(IModel):
                 rank for rank in ranks if similarities[rank] > self.__min_similarity
             ]
         if len(coctails_ids) == 0 and self.__max_similarity is None and self.__min_similarity is None:
-            coctails_ids = ranks            
+            coctails_ids = ranks
 
         return self.__dataset.get_coctails_by_ids(coctails_ids)

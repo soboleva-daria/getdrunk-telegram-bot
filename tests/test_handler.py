@@ -99,7 +99,9 @@ def test_info():
 
     correct_response2 = """
          Pina Colada 🍍 🥃 was officially invented on August 15 1954\
- by a bartender named Ramón “Monchito” Marrero! 🔬
+ by a bartender named Ramón “Monchito” Marrero
+
+    Characteristics: sweet! 🔬
     """
     response2, _ = run_test_request(handler, '\\info')
     correct_response2 = '\n'.join(
@@ -122,5 +124,11 @@ def test_recipe_of_the_day():
 
 
 def test_explore():
-    # TODO: add //explore functionality
-    pass
+    handler = get_handler('TFIdfCocktailModel')
+    _, _ = run_test_request(handler, '\\start')
+    response, _ = run_test_request(handler, '\\explore Pina Colada')
+    assert 'similar to' in response
+    response, _ = run_test_request(handler, '\\explore rum, juice')
+    assert 'with these ingredients' in response
+    response, _ = run_test_request(handler, '\\explore Ere long done do does did')
+    assert 'Sorry, I' in response

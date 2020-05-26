@@ -43,7 +43,8 @@ class BertEmbeder(IEmbeder):
                     for text in data[i:i + self.batch_size]
                 ]
             )
-            encoded_layers, _ = self.model(tokens_tensor)
+            with torch.no_grad():
+                encoded_layers, _ = self.model(tokens_tensor)
             batches.append(encoded_layers[-1][:, 0, :])
 
         return torch.cat(batches).detach().numpy()

@@ -314,7 +314,6 @@
                 "volume": 180
             },
             {
-                "image": "https://us.inshaker.com/uploads/cocktail/hires/948/1537758161-Black-Cherry__highres.jpg",
                 "__cocktail__": true,
                 "name": "Black Cherry",
                 "characteristics": [
@@ -390,12 +389,12 @@
                     "Top up with pineapple juice and stir gently",
                     "Garnish with a pineapple wedge"
                 ],
+                "image": "https://us.inshaker.com/uploads/cocktail/hires/948/1537758161-Black-Cherry__highres.jpg",
                 "useful_info": null,
                 "abv": 0.102,
                 "volume": 232
             },
             {
-                "image": "https://us.inshaker.com/uploads/cocktail/hires/1379/1556294476-Fake_melon_800.jpg",
                 "__cocktail__": true,
                 "name": "Fake melon",
                 "characteristics": [
@@ -493,13 +492,13 @@
                     "Strain into the rocks glass",
                     "Garnish with melon rind and ground lemon zest"
                 ],
+                "image": "https://us.inshaker.com/uploads/cocktail/hires/1379/1556294476-Fake_melon_800.jpg",
                 "useful_info": null,
                 "abv": 0.156,
                 "volume": 114
             }
         ],
         "cocktail": {
-            "image": "https://us.inshaker.com/uploads/cocktail/hires/1379/1556294476-Fake_melon_800.jpg",
             "__cocktail__": true,
             "name": "Fake melon",
             "characteristics": [
@@ -597,6 +596,7 @@
                 "Strain into the rocks glass",
                 "Garnish with melon rind and ground lemon zest"
             ],
+            "image": "https://us.inshaker.com/uploads/cocktail/hires/1379/1556294476-Fake_melon_800.jpg",
             "useful_info": null,
             "abv": 0.156,
             "volume": 114
