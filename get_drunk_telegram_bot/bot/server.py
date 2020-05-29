@@ -517,7 +517,9 @@ class GetDrunkBotHandler(TelegramInterface):
 
         max_ratio = 0.8
         for cocktail_name, ingredients in self.dataset.get_names_and_ingredients():
-            ratio = difflib.SequenceMatcher(a=query, b=cocktail_name.lower()).ratio()
+            words = cocktail_name.split()
+            original_name = ' '.join([word for word in words if word.lower()[0].islower()])
+            ratio = difflib.SequenceMatcher(a=query, b=original_name.lower()).ratio()
             if ratio > max_ratio:
                 right_ingredients = ingredients
                 right_cocktail_name = cocktail_name
@@ -550,6 +552,8 @@ class GetDrunkBotHandler(TelegramInterface):
                 + '\n'
                 + 'Enjoy! 💫'
             )
+
+            print(msg)
 
         else:
             predictions = self.model.predict(query)
