@@ -553,8 +553,6 @@ class GetDrunkBotHandler(TelegramInterface):
                 + 'Enjoy! 💫'
             )
 
-            print(msg)
-
         else:
             predictions = self.model.predict(query)
             if len(predictions) > 0:
