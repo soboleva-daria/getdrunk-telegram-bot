@@ -32,12 +32,13 @@ If you want to run your own bot, please follow the instructions below.
 **How to install and run**
 
 After clonning, you may use two different ways to run the bot:  
+(1) Install [Git LFS](https://git-lfs.github.com/)
 
-(1) Install the package (Recommended)
+(2) Install the package (Recommended)
 ```python
 pip install <path-to-root>
 ```
-(2) Run your own bot
+(3) Run your own bot
 - First, text a message to @BotFather in [Telegram](https://t.me/botfather). You will need your own ```<token>``` for GetDrunkBot;
 - Then, bind your port with an external url. For example you may run ```ngrok```:
 ```bash
@@ -45,7 +46,7 @@ pip install <path-to-root>
 ```
 ```<your server url>``` is the one returned by this command. Note: it should start with ```https:```.
 
-(3) Run the command (Please verify you have Python >=3.6.0) 
+(4) Run the command (Please verify you have Python >=3.6.0) 
 ```python
 python -m get_drunk_telegram_bot --token <token> --port <port> --web-hook-url <your server url>
 ```
